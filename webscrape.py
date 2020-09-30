@@ -63,5 +63,7 @@ def getCookieRecipes(starting_link):
     print(recipes)
 
     driver.close()
+    return recipes
+
 
 getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
