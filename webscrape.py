@@ -1,9 +1,9 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 import json
-from cookie_generator import Recipe
-from cookie_generator import BaseIngredients
-from cookie_generator import AddIns
+#from cookie_generator import Recipe
+#from cookie_generator import BaseIngredients
+#from cookie_generator import AddIns
 
 """
 Here, we want to build our Ingredient and Recipe objects for our inspiring set
@@ -15,7 +15,7 @@ Here, we want to build our Ingredient and Recipe objects for our inspiring set
 @returns:
     recipe_objects --> list of recipe objects
 
-"""
+
 def buildInspiringSet(recipes, base_ingredients):
     base_ingredient_objects = {} # store base ingredient objects
     add_ins_object_list = [] 
@@ -39,7 +39,7 @@ def buildInspiringSet(recipes, base_ingredients):
 
 
 
-"""
+
 In this function, we are crawling the website sally's baking addiction for cookie recipes for our inspiring set
 
 Essentially, we start the crawl from the link to the category of the website listing cookie recipes, then
@@ -70,16 +70,23 @@ def getCookieRecipes(link_list):
         # now, we want to find all of our ingredients and quantities
         title = driver.find_element_by_class_name("tasty-recipes-title").text #get the ingredients class from html
         print(title)
-        recipes[title] = {}
+        recipes[title] = []
         ingredients = driver.find_element_by_class_name("tasty-recipes-ingredients") #get the ingredients class from html
         list_items = ingredients.find_elements_by_tag_name("li") # get list items for ingredients
         for item in list_items: # loop through ingredients
+            string_ingredient = ""
             ingredient = item.find_element_by_tag_name("strong").text # this is the ingredient name
             ingredient_amounts = item.find_elements_by_css_selector('span')  # span tag holds our amount info
-            recipes[title][ingredient] = []
             for amount in ingredient_amounts: 
-                recipes[title][ingredient].append(amount.get_attribute('data-amount'))
-                recipes[title][ingredient].append(amount.get_attribute('data-unit'))
+                data_amount = amount.get_attribute('data-amount')
+                data_unit = amount.get_attribute('data-unit')
+                if data_amount != None:
+                    string_ingredient += data_amount + " "
+                if data_unit != None:
+                    string_ingredient += data_unit + " "
+                #string_ingredient += "or"
+            string_ingredient += ingredient + " "
+            recipes[title].append(string_ingredient)
 
     print(recipes)
 
