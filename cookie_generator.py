@@ -1,10 +1,10 @@
 import selenium
-import numpy
+import re
 import random
 
 from webscrape import getCookieRecipes
 
-class BaseIngredients(object):
+class BaseIngredient(object):
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
@@ -36,6 +36,15 @@ class BaseIngredients(object):
 
         return new_quantity
 
+    
+    """
+    Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
+    """
+    def updateQuantity(self, quantity):
+        if quantity in self.quantities:
+            self.quantities[quantity]+=1
+        else:
+            self.quantities.setdefault(quantity, 1)
 
 
 
@@ -77,5 +86,32 @@ def processRecipes():
 
     #need to extract the quantities dictionary for each 
 
+    # BASE INGREDIENTS #
+    base_ingredients = []
+    base_ingredients.append(BaseIngredient(name="flour",quantities={}))
+    base_ingredients.append(BaseIngredient(name="egg", quantities={}))
+    base_ingredients.append(BaseIngredient(name="granulated sugar", quantities={}))
+    base_ingredients.append(BaseIngredient(name="brown sugar", quantities={}))
+    base_ingredients.append(BaseIngredient(name="butter", quantities={}))
+    base_ingredients.append(BaseIngredient(name="salt", quantities={}))
+    base_ingredients.append(BaseIngredient(name="all-purpose flour", quantities={}))
+    base_ingredients.append(BaseIngredient(name="baking soda", quantities={}))
+    base_ingredients.append(BaseIngredient(name="baking powder", quantities={}))
+
+    # update quantities dictionary for each of the base ingredients
+    for i in base_ingredients:
+        for recipe in recipes:
+            for ingredient in recipes[recipe]:
+                if i.name in ingredient:
+                    q = re.search(r'^[0-9]+(\/[0-9]+)*(\sand\s)*([0-9]+(\/[0-9]+))*\s[a-zA-Z]+', ingredient)
+                    if q is not None:
+                        quantity = q.group()
+                        i.updateQuantity(quantity)
+
+
+
+                    
+
+processRecipes()
 
 
