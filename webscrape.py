@@ -53,21 +53,6 @@ def getCookieRecipes(starting_link):
                 for ingredient in key['recipeIngredient']:
                     recipes[name].append(ingredient)
                     #print(ingredient)
-            """
-            if "recipeInstructions" in key.keys():
-                instructions = key["recipeInstructions"]
-                recipes["instructions"] = []
-                for step in instructions:
-                    for key, value in step.items():
-                        if key == 'text':
-                            recipes["instructions"].append(value)
-            
-
-    for name in recipes:
-        print("recipe name: " + name)
-        for ingredient in recipes[name]:
-            print(ingredient)
-    """
 
     driver.close()
     return recipes

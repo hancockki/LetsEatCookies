@@ -39,6 +39,8 @@ class BaseIngredient(object):
     
     """
     Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
+    
+    
     """
     def updateQuantity(self, quantity):
         if quantity in self.quantities:
@@ -73,7 +75,6 @@ def buildNewRecipe(base_ingredients, mix_ins):
     for i in base_ingredients:
         ingredients.update({i.name,i.getQuantity()})
 
-    #adding in mix-ins ???? discuss later
  
     return ingredients
 
@@ -81,7 +82,7 @@ def buildNewRecipe(base_ingredients, mix_ins):
 """
 
 """
-def processRecipes():
+def inspiringSet():
     recipes = getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
 
     #need to extract the quantities dictionary for each 
@@ -107,11 +108,10 @@ def processRecipes():
                     if q is not None:
                         quantity = q.group()
                         i.updateQuantity(quantity)
+                else:
 
 
 
                     
-
-processRecipes()
 
 
