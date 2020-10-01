@@ -47,9 +47,10 @@ class AddIns(object):
 
 
 class Recipe(object):
-    def __init__(self, name, ingredients):
+    def __init__(self, name, base_ingredients, add_ins):
         self.name = name
-        self.ingredients = ingredients
+        self.base_ingredients = base_ingredients
+        self.add_ins = add_ins
 
     
 

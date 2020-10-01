@@ -1,6 +1,43 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 import json
+from cookie_generator import Recipe
+from cookie_generator import BaseIngredients
+from cookie_generator import AddIns
+
+"""
+Here, we want to build our Ingredient and Recipe objects for our inspiring set
+
+@params:
+    recipes --> dictionary of recipes
+    base_ingredients --> base ingredients hard coded into our program
+
+@returns:
+    recipe_objects --> list of recipe objects
+
+"""
+def buildInspiringSet(recipes, base_ingredients):
+    base_ingredient_objects = {} # store base ingredient objects
+    add_ins_object_list = [] 
+    recipes_list = []
+    # each key of recipes is a name and the value is the ingredients 
+    for recipe_name, ingredients in recipes.items():
+        for ingredient_name, ingredient_quantity in ingredients.items():
+            # if our ingredient is a base ingredient
+            if ingredient_name in base_ingredients:
+                # if the base ingredient object has already been created
+                if ingredient_name in base_ingredient_objects.keys():
+                    base_ingredient_objects[ingredient_name] += 1
+                else:
+                    quantities = {}
+                    for i in range(0, len(ingredient_quantity), 2):
+                        quantity = ingredient_quantity[i] + ingredient_quantity[i+1]
+                        quantities[quantity] = 1
+                    base_ingredient_objects[ingredient_name] = BaseIngredients(ingredient_name, quantities)
+            else:
+                if ingredient_name in add_ins_object_list:
+
+
 
 """
 In this function, we are crawling the website sally's baking addiction for cookie recipes for our inspiring set
@@ -30,27 +67,19 @@ def getCookieRecipes(link_list):
     #now, we want to loop through the recipe links
     for link in link_list:
         driver.get (link) #open link to recipe
-        # get inner html, aka text of the javascript json
-        type_link = driver.find_element_by_xpath('//script[@type="application/ld+json"]').get_attribute('innerHTML')
-        # load the json object
-        itemjson = json.loads(type_link.strip())
-        #loop through part of the json we want
-        for key in itemjson['@graph']:
-            # if the json key we want is present
-            if "headline" in key.keys():
-                name = key["headline"]
-                print(name)
-                recipes[name] = {} 
         # now, we want to find all of our ingredients and quantities
+        title = driver.find_element_by_class_name("tasty-recipes-title").text #get the ingredients class from html
+        print(title)
+        recipes[title] = {}
         ingredients = driver.find_element_by_class_name("tasty-recipes-ingredients") #get the ingredients class from html
         list_items = ingredients.find_elements_by_tag_name("li") # get list items for ingredients
         for item in list_items: # loop through ingredients
             ingredient = item.find_element_by_tag_name("strong").text # this is the ingredient name
             ingredient_amounts = item.find_elements_by_css_selector('span')  # span tag holds our amount info
-            recipes[name][ingredient] = []
+            recipes[title][ingredient] = []
             for amount in ingredient_amounts: 
-                recipes[name][ingredient].append(amount.get_attribute('data-amount'))
-                recipes[name][ingredient].append(amount.get_attribute('data-unit'))
+                recipes[title][ingredient].append(amount.get_attribute('data-amount'))
+                recipes[title][ingredient].append(amount.get_attribute('data-unit'))
 
     print(recipes)
 
@@ -61,7 +90,8 @@ def getCookieRecipes(link_list):
 
 #getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
 getCookieRecipes(['https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
-    'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/'])
+    'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/soft-molasses-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
+        'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/'])
 
 
 
@@ -105,4 +135,16 @@ getCookieRecipes(['https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cook
                     for key, value in step.items():
                         if key == 'text':
                             recipes["instructions"].append(value)
-            """
+
+# get inner html, aka text of the javascript json
+        type_link = driver.find_element_by_xpath('//script[@type="application/ld+json"]').get_attribute('innerHTML')
+        # load the json object
+        itemjson = json.loads(type_link.strip())
+        #loop through part of the json we want
+        for key in itemjson['@graph']:
+            # if the json key we want is present
+            if "headline" in key.keys():
+                name = key["headline"]
+                print(name)
+                recipes[name] = {} 
+"""
