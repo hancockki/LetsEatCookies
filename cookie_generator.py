@@ -108,7 +108,7 @@ def inspiringSet():
     add_ins = {}
     base_ingredients["flour"] = BaseIngredient(name="flour",quantities={})
     base_ingredients["egg"] = BaseIngredient(name="egg", quantities={})
-    base_ingredients["granulated sugae"] = BaseIngredient(name="granulated sugar", quantities={})
+    base_ingredients["granulated sugar"] = BaseIngredient(name="granulated sugar", quantities={})
     base_ingredients["brown sugar"] = BaseIngredient(name="brown sugar", quantities={})
     base_ingredients["butter"] = BaseIngredient(name="butter", quantities={})
     base_ingredients["salt"] = BaseIngredient(name="salt", quantities={})
@@ -126,8 +126,8 @@ def inspiringSet():
                     if q is not None:
                         quantity = q.group()
                         base_ingredients[i].updateQuantity(quantity)
-                    done = True
-                    break
+                        done = True
+                        break
             if not done:
                 if ingredient in add_ins.keys():
                     q = re.search(r'^[0-9]+(\/[0-9]+)*(\sand\s)*([0-9]+(\/[0-9]+))*\s[a-zA-Z]+', ingredient)
@@ -138,6 +138,16 @@ def inspiringSet():
                         new_add_in = AddIns(name=ingredient, quantities={})
                         new_add_in.updateQuantity(quantity)
                         add_ins[ingredient] = new_add_in
+
+    for value in base_ingredients.values():
+        print(value.name)
+        print(value.quantities)
+
+    for value in add_ins.values():
+        print(value.name)
+        print(value.quantities)
+
+    
 
 
 """
