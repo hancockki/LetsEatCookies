@@ -4,6 +4,12 @@ import random
 
 from webscrape import getCookieRecipes
 
+"""
+Attributes:
+    name --> the name of the ingredient
+
+
+"""
 class BaseIngredients(object):
     def __init__(self, name, quantities):
         self.name = name
@@ -21,7 +27,7 @@ class BaseIngredients(object):
     def getQuantity(self):
         new_quantity = 0 # the quantity will be assigned to this variable
 
-        sum_quantity = 0 
+        sum_quantity = 0 # the total quantity across the dictionary
         for q in self.quantities:
             sum_quantity += self.quantities[q]
         num = random.randint(0,sum_quantity) # random integer between 0 and the total sum
@@ -37,13 +43,20 @@ class BaseIngredients(object):
         return new_quantity
 
 
+    """
+
+    """
+    def updateQuantity(self, quantity):
+        self.quantities[quantity]+=1
+
+
+
 
 
 class AddIns(object):
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
-
 
 
 class Recipe(object):
@@ -56,7 +69,6 @@ class Recipe(object):
 # WHERE TO GO...
 
 """
-
 """
 def buildNewRecipe(base_ingredients, mix_ins):
     ingredients = {}
@@ -68,14 +80,13 @@ def buildNewRecipe(base_ingredients, mix_ins):
  
     return ingredients
 
-
 """
 
 """
 def processRecipes():
     recipes = getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
 
-    #need to extract the quantities dictionary for each 
-
+    #need to distinguish the base ingredients from mix-ins
+    
 
 
