@@ -96,48 +96,62 @@ def buildNewRecipe(base_ingredients, mix_ins):
 """
 def inspiringSet():
     recipes = getCookieRecipes(['https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
-    'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/soft-molasses-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
-        'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/'])
+    'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/bunny-sugar-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
+        'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/', 'https://sallysbakingaddiction.com/oreo-cheesecake-cookies/'])
 
-
+    recipe_objects = []
 
     #need to extract the quantities dictionary for each 
 
     # BASE INGREDIENTS #
     base_ingredients = {}
     add_ins = {}
-    base_ingredients["flour"] = BaseIngredient(name="flour",quantities={})
+    base_ingredients["all-purpose flour"] = BaseIngredient(name="all-purpose flour",quantities={})
     base_ingredients["egg"] = BaseIngredient(name="egg", quantities={})
     base_ingredients["granulated sugar"] = BaseIngredient(name="granulated sugar", quantities={})
     base_ingredients["brown sugar"] = BaseIngredient(name="brown sugar", quantities={})
     base_ingredients["butter"] = BaseIngredient(name="butter", quantities={})
     base_ingredients["salt"] = BaseIngredient(name="salt", quantities={})
-    base_ingredients["all-purpose flout"] = BaseIngredient(name="all-purpose flour", quantities={})
     base_ingredients["baking soda"] = BaseIngredient(name="baking soda", quantities={})
     base_ingredients["baking powder"] = BaseIngredient(name="baking powder", quantities={})
 
     # update quantities dictionary for each of the base ingredients
     for recipe in recipes:
+        next_recipe = Recipe(recipe, base_ingredients=[], add_ins=[])
         for ingredient in recipes[recipe]:
             for i in base_ingredients.keys():
                 done = False
                 if i in ingredient:
-                    q = re.search(r'^[0-9]+(\/[0-9]+)*(\sand\s)*([0-9]+(\/[0-9]+))*\s[a-zA-Z]+', ingredient)
+                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*\s[a-zA-Z]+', ingredient)
                     if q is not None:
                         quantity = q.group()
+                        if 'egg' in quantity:
+                            quantity = quantity.replace('egg','')
+                            print("QUANTITY NO EGG", quantity)
                         base_ingredients[i].updateQuantity(quantity)
                         done = True
+                        next_recipe.base_ingredients.append({i:quantity})
                         break
             if not done:
-                if ingredient in add_ins.keys():
-                    q = re.search(r'^[0-9]+(\/[0-9]+)*(\sand\s)*([0-9]+(\/[0-9]+))*\s[a-zA-Z]+', ingredient)
-                    if q is not None:
-                        quantity = q.group()
-                        add_ins[ingredient].updateQuantity(quantity)
+                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*\s[a-zA-Z]+', ingredient)
+                if 'cornstarch' in ingredient:
+                    name = 'cornstarch'
+                else:
+                    name = ingredient.split(" ")
+                    name = " ".join(name[2:]).strip("*")
+                print(name)
+                if q is not None:
+                    quantity = q.group()
+                    if 'cornstarch' in quantity:
+                        quantity = quantity.replace('cornstarch', 'teaspoon')
+                    if name in add_ins.keys():
+                        add_ins[name].updateQuantity(quantity)
+                        next_recipe.add_ins.append({name:quantity})
                     else:
-                        new_add_in = AddIns(name=ingredient, quantities={})
+                        new_add_in = AddIns(name=name, quantities={})
                         new_add_in.updateQuantity(quantity)
-                        add_ins[ingredient] = new_add_in
+                        add_ins[name] = new_add_in
+        recipe_objects.append(next_recipe)
 
     for value in base_ingredients.values():
         print(value.name)
@@ -147,8 +161,12 @@ def inspiringSet():
         print(value.name)
         print(value.quantities)
 
-    
+    for recipe in recipe_objects:
+        print(recipe.name)
+        print(recipe.base_ingredients)
+        print(recipe.add_ins)
 
+    return base_ingredients, add_ins, recipe_objects
 
 """
 

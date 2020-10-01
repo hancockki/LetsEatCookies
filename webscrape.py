@@ -84,6 +84,7 @@ def getCookieRecipes(link_list):
                     string_ingredient += data_amount + " "
                 if data_unit != None:
                     string_ingredient += data_unit + " "
+                break
                 #string_ingredient += "or"
             string_ingredient += ingredient + " "
             recipes[title].append(string_ingredient)
@@ -96,9 +97,9 @@ def getCookieRecipes(link_list):
 
 
 #getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
-getCookieRecipes(['https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
-    'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/soft-molasses-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
-        'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/'])
+#getCookieRecipes(['https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
+ #   'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/soft-molasses-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
+  #      'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/'])
 
 
 
