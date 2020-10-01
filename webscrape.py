@@ -32,7 +32,7 @@ def getCookieRecipes(starting_link):
         cookie_recipe_links = driver.find_elements_by_class_name('c-archive-post') # c-archive-post is the html class containing the href to the recipes
         for link in cookie_recipe_links: # loop through the links
             recipe_links.append(link.find_element_by_css_selector('a').get_attribute('href')) # add href to links list
-            print(link.find_element_by_css_selector('a').get_attribute('href'))
+            #print(link.find_element_by_css_selector('a').get_attribute('href'))
         #in this next line, we append the end of the link to reflect the page num we want (represented by i)
         next_link = starting_link + "page/"+str(i)+'/' 
 
@@ -52,6 +52,8 @@ def getCookieRecipes(starting_link):
             if "recipeIngredient" in key.keys():
                 for ingredient in key['recipeIngredient']:
                     recipes[name].append(ingredient)
+                    #print(ingredient)
+            """
             if "recipeInstructions" in key.keys():
                 instructions = key["recipeInstructions"]
                 recipes["instructions"] = []
@@ -59,11 +61,16 @@ def getCookieRecipes(starting_link):
                     for key, value in step.items():
                         if key == 'text':
                             recipes["instructions"].append(value)
-        
-    print(recipes)
+            
+
+    for name in recipes:
+        print("recipe name: " + name)
+        for ingredient in recipes[name]:
+            print(ingredient)
+    """
 
     driver.close()
     return recipes
 
 
-getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
+#getCookieRecipes('https://sallysbakingaddiction.com/category/desserts/cookies/')
