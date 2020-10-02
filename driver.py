@@ -110,6 +110,7 @@ def getCookieRecipes(link_list):
                     for key, value in step.items():
                         if key == 'text':
                             recipes["instructions"].append(value)
+<<<<<<< HEAD:webscrape.py
 
 # get inner html, aka text of the javascript json
         type_link = driver.find_element_by_xpath('//script[@type="application/ld+json"]').get_attribute('innerHTML')
@@ -157,3 +158,6 @@ def buildInspiringSet(recipes, base_ingredients):
                 if ingredient_name in add_ins_object_list:
 
 """
+=======
+            """
+>>>>>>> c743db865e2e7d6c3d507097e5d1e5920b908a6d:driver.py
