@@ -5,41 +5,8 @@ import json
 #from cookie_generator import BaseIngredients
 #from cookie_generator import AddIns
 
+
 """
-Here, we want to build our Ingredient and Recipe objects for our inspiring set
-
-@params:
-    recipes --> dictionary of recipes
-    base_ingredients --> base ingredients hard coded into our program
-
-@returns:
-    recipe_objects --> list of recipe objects
-
-
-def buildInspiringSet(recipes, base_ingredients):
-    base_ingredient_objects = {} # store base ingredient objects
-    add_ins_object_list = [] 
-    recipes_list = []
-    # each key of recipes is a name and the value is the ingredients 
-    for recipe_name, ingredients in recipes.items():
-        for ingredient_name, ingredient_quantity in ingredients.items():
-            # if our ingredient is a base ingredient
-            if ingredient_name in base_ingredients:
-                # if the base ingredient object has already been created
-                if ingredient_name in base_ingredient_objects.keys():
-                    base_ingredient_objects[ingredient_name] += 1
-                else:
-                    quantities = {}
-                    for i in range(0, len(ingredient_quantity), 2):
-                        quantity = ingredient_quantity[i] + ingredient_quantity[i+1]
-                        quantities[quantity] = 1
-                    base_ingredient_objects[ingredient_name] = BaseIngredients(ingredient_name, quantities)
-            else:
-                if ingredient_name in add_ins_object_list:
-
-
-
-
 In this function, we are crawling the website sally's baking addiction for cookie recipes for our inspiring set
 
 Essentially, we start the crawl from the link to the category of the website listing cookie recipes, then
@@ -84,10 +51,9 @@ def getCookieRecipes(link_list):
                     string_ingredient += data_amount + " "
                 if data_unit != None:
                     string_ingredient += data_unit + " "
-                break
                 #string_ingredient += "or"
-            string_ingredient += ingredient + " "
-            recipes[title].append(string_ingredient)
+            #string_ingredient += ingredient
+            recipes[title].append([ingredient, string_ingredient])
 
     print(recipes)
 
@@ -155,4 +121,38 @@ def getCookieRecipes(link_list):
                 name = key["headline"]
                 print(name)
                 recipes[name] = {} 
+"""
+
+"""
+Here, we want to build our Ingredient and Recipe objects for our inspiring set
+
+@params:
+    recipes --> dictionary of recipes
+    base_ingredients --> base ingredients hard coded into our program
+
+@returns:
+    recipe_objects --> list of recipe objects
+
+
+def buildInspiringSet(recipes, base_ingredients):
+    base_ingredient_objects = {} # store base ingredient objects
+    add_ins_object_list = [] 
+    recipes_list = []
+    # each key of recipes is a name and the value is the ingredients 
+    for recipe_name, ingredients in recipes.items():
+        for ingredient_name, ingredient_quantity in ingredients.items():
+            # if our ingredient is a base ingredient
+            if ingredient_name in base_ingredients:
+                # if the base ingredient object has already been created
+                if ingredient_name in base_ingredient_objects.keys():
+                    base_ingredient_objects[ingredient_name] += 1
+                else:
+                    quantities = {}
+                    for i in range(0, len(ingredient_quantity), 2):
+                        quantity = ingredient_quantity[i] + ingredient_quantity[i+1]
+                        quantities[quantity] = 1
+                    base_ingredient_objects[ingredient_name] = BaseIngredients(ingredient_name, quantities)
+            else:
+                if ingredient_name in add_ins_object_list:
+
 """

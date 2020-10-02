@@ -13,7 +13,7 @@ from webscrape import getCookieRecipes
 """
 
 """
-def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
+def buildNewRecipe(base_ingredients, add_ins, recipe_objects, name):
     base_ingredients_recipe = []
     add_ins_recipe = []
 
@@ -22,8 +22,8 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     
     #genetic algorithm for add-ins
 
-    num1 = random.randint(0,len(recipe_objects))
-    num2 = random.randint(0,len(recipe_objects))
+    num1 = random.randint(0,len(recipe_objects)-1)
+    num2 = random.randint(0,len(recipe_objects)-1)
 
     add_ins_recipe_1 = recipe_objects[num1].add_ins
     add_ins_recipe_2 = recipe_objects[num2].add_ins
@@ -35,14 +35,18 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     pivot2 = random.randint(0,size_addins_2)
 
     for i in range(0,pivot1):
-        print("KEYS" , add_ins_recipe_1[i].keys())
+        print("KEYS" , list(add_ins_recipe_1[i].keys())[0])
 
-        add_ins_recipe.append({add_ins_recipe_1[i].keys() : add_ins[add_ins_recipe_1[i].keys()].getQuantity()})
+        add_ins_recipe.append({list(add_ins_recipe_1[i].keys())[0] : add_ins[list(add_ins_recipe_1[i].keys())[0]].getQuantity()})
     for i in range(pivot2, size_addins_2):
-        add_ins_recipe.append({add_ins_recipe_2[i].name : add_ins_recipe_2[i].getQuantity()})
+        #add_ins_recipe.append({add_ins_recipe_2[i].keys() : add_ins[add_ins_recipe_2[i].keys()].getQuantity()})
+        #add_ins_recipe.append({add_ins_recipe_2[i].name : add_ins_recipe_2[i].getQuantity()})
+        print("NEW QUANTITY", add_ins[list(add_ins_recipe_2[i].keys())[0]].getQuantity())
+        add_ins_recipe.append({list(add_ins_recipe_2[i].keys())[0] : add_ins[list(add_ins_recipe_2[i].keys())[0]].getQuantity()})
 
 
-    new_recipe = Recipe(name="new_recipe", base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
+
+    new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
     #adding in mix-ins ???? discuss later
  
     return new_recipe
@@ -81,9 +85,9 @@ def getInspiringSet(recipes):
         for ingredient in recipes[recipe]: #loop through ingredients of this recipe
             for i in base_ingredients.keys():
                 done = False # use this boolean to break the loop once we have matched from base ingredients
-                if i in ingredient:
+                if i in ingredient[0]:
                     # match the ingredient quantity
-                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*\s[a-zA-Z]+', ingredient)
+                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*\s[a-zA-Z]+', ingredient[1])
                     if q is not None: #if we got a match
                         quantity = q.group()
                         # edge cases
@@ -98,12 +102,13 @@ def getInspiringSet(recipes):
                         break
             # this means it is an add-in
             if not done:
-                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*\s[a-zA-Z]+', ingredient)
-                if 'cornstarch' in ingredient:
+                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*\s[a-zA-Z]+', ingredient[1])
+                if 'cornstarch' in ingredient[1]:
                     name = 'cornstarch'
                 else:
-                    name = ingredient.split(" ")
-                    name = " ".join(name[2:]).strip("*")
+                    name = ingredient[0]
+                    #name = ingredient.split(" ")
+                    #name = " ".join(name[2:]).strip("*")
                 print(name)
                 # if we got a match
                 if q is not None:
@@ -118,6 +123,7 @@ def getInspiringSet(recipes):
                         new_add_in = AddIns(name=name, quantities={})
                         new_add_in.updateQuantity(quantity)
                         add_ins[name] = new_add_in
+                        next_recipe.add_ins.append({name:quantity})
         recipe_objects.append(next_recipe)
 
     for value in base_ingredients.values():
@@ -146,10 +152,10 @@ def writeToFile(recipe):
         new_recipe.write(recipe.name + "\n")
         for ingredient in recipe.base_ingredients:
             for key, value in ingredient.items():
-                new_recipe.write(key + " " + value + "\n")
+                new_recipe.write(key + " " + str(value) + "\n")
         for ingredient in recipe.add_ins:
             for key, value in ingredient.items():
-                new_recipe.write(key + " " + value + "\n")
+                new_recipe.write(key + " " + str(value) + "\n")
     new_recipe.close()
 
 
@@ -163,8 +169,9 @@ def main():
     for recipe in recipe_objects:
         writeToFile(recipe)
     for i in range(5):
-        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
+        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects, "new_recipe" + str(i))
         print("NEWRECIPE")
+        print(new_recipe.add_ins, new_recipe.base_ingredients)
         writeToFile(new_recipe)
 
 
