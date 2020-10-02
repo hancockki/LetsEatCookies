@@ -52,6 +52,7 @@ def getCookieRecipes(link_list):
                 if data_unit != None:
                     string_ingredient += data_unit + " "
                 #string_ingredient += "or"
+                break
             #string_ingredient += ingredient
             recipes[title].append([ingredient, string_ingredient])
 

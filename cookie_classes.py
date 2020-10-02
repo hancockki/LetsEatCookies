@@ -20,7 +20,10 @@ class BaseIngredient(object):
         returns the quantity
     """
     def getQuantity(self):
-        new_quantity = 0 # the quantity will be assigned to this variable
+        new_quantity = 0
+        for key in self.quantities.keys():
+            new_quantity = key # the quantity will be assigned to this variable
+            break
 
         sum_quantity = 0 
         for q in self.quantities:
@@ -50,14 +53,25 @@ class BaseIngredient(object):
 
 
 
+"""
+Attributes:
+    name --> str of the name
+    quantities --> dictionary where keys are strings of the name of the quantity and value is the ingredients
 
+"""
 class AddIns(object):
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
 
+    """
+
+    """
     def getQuantity(self):
-        new_quantity = 0 # the quantity will be assigned to this variable
+        new_quantity = 0
+        for key in self.quantities.keys():
+            new_quantity = key # the quantity will be assigned to this variable
+            break
 
         sum_quantity = 0 
         for q in self.quantities:
@@ -76,8 +90,6 @@ class AddIns(object):
 
     """
     Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
-    
-    
     """
     def updateQuantity(self, quantity):
         if quantity in self.quantities:

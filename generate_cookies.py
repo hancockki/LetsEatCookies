@@ -13,7 +13,7 @@ from webscrape import getCookieRecipes
 """
 
 """
-def buildNewRecipe(base_ingredients, add_ins, recipe_objects, name):
+def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     base_ingredients_recipe = []
     add_ins_recipe = []
 
@@ -44,8 +44,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects, name):
         print("NEW QUANTITY", add_ins[list(add_ins_recipe_2[i].keys())[0]].getQuantity())
         add_ins_recipe.append({list(add_ins_recipe_2[i].keys())[0] : add_ins[list(add_ins_recipe_2[i].keys())[0]].getQuantity()})
 
-
-
+    name = getName(add_ins_recipe)
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
     #adding in mix-ins ???? discuss later
  
@@ -87,7 +86,7 @@ def getInspiringSet(recipes):
                 done = False # use this boolean to break the loop once we have matched from base ingredients
                 if i in ingredient[0]:
                     # match the ingredient quantity
-                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*\s[a-zA-Z]+', ingredient[1])
+                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
                     if q is not None: #if we got a match
                         quantity = q.group()
                         # edge cases
@@ -99,10 +98,9 @@ def getInspiringSet(recipes):
                         base_ingredients[i].updateQuantity(quantity)
                         done = True
                         next_recipe.base_ingredients.append({i:quantity})
-                        break
             # this means it is an add-in
             if not done:
-                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*\s[a-zA-Z]+', ingredient[1])
+                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
                 if 'cornstarch' in ingredient[1]:
                     name = 'cornstarch'
                 else:
@@ -158,6 +156,17 @@ def writeToFile(recipe):
                 new_recipe.write(key + " " + str(value) + "\n")
     new_recipe.close()
 
+def getName(add_ins):
+    int1 = random.randint(0, len(add_ins) - 1)
+    int2 = random.randint(0, len(add_ins) - 1)
+    
+    name1 = list(add_ins[int1].keys())[0] #grab name attribute of the index of the addin from our master list
+    name2 = list(add_ins[int2].keys())[0]
+
+    name = name1.capitalize() + " " + name2.capitalize() + " Cookies"
+
+    return name
+
 
 
 
@@ -168,13 +177,15 @@ def main():
     base_ingredients, add_ins, recipe_objects = getInspiringSet(recipes)
     for recipe in recipe_objects:
         writeToFile(recipe)
+
+
+    # loop to generate cookies
     for i in range(5):
-        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects, "new_recipe" + str(i))
+        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
+        new_recipe.name = getName(new_recipe.add_ins)
         print("NEWRECIPE")
         print(new_recipe.add_ins, new_recipe.base_ingredients)
         writeToFile(new_recipe)
-
-
 
 
 
