@@ -1,7 +1,50 @@
 # LetsEatCookies
-To run the program, git clone it into whatever directory you want it in. Then, run the script generate_cookies by typing python3 generate_cookies.py in the terminal!
+The purpose of this program is to use 
+
 ## Cookie_classes.py
+Class Overview:
+
+### BaseIngredient
+BaseIngredient objects have the following attributes:
+- **name**, which is a string representing the name of the ingredient
+- **quantities**, which is a dictionary mapping quantities of the ingredient to the number of times each quantitiy appears in the inspiring set
+
+The BaseIngredient class has the following functions:
+- **getQuantity**, where the quantities attribute can be retreived
+- **updateQuantity**, where the quantities attribute can be re-assigned
+
+### AddIns
+AddIn objects have the following attributes:
+- **name**, which is a string representing the name of the ingredient
+- **quantities**, which is a dictionary mapping quantities of the ingredient to the number of times each quantitiy appears in the inspiring set
+
+The AddIns class has the following functions:
+- **getQuantity**, where the quantities attribute can be retreived
+- **updateQuantity**, where the quantities attribute can be re-assigned
+
+### Recipe
+Recipe objects have the following attributes:
+- **name**, which is a string representing the name of the recipe
+- **base_ingredients**, which is a list of BaseIngredient objects 
+- **add_ins**, which is a list of AddIns objects
 
 ## generate_cookies.py
+There are no classes within generate_cookies.py, but it contains the following functions:
+- **buildNewRecipe**, which creates 
 
-## webscrape.py
+- **getInspiringSet**, which populates the inspiring set with the dictonary of recipes from the web crawl in driver.py, with the name mapped to the ingredients/quantities. It builds and returns a list of BaseIngredient objects from all of the recipes, AddIns Objects from all the recipes and Recipe Objects for each recipe.
+
+- **writeToFile**, 
+
+
+## driver.py
+There are no classes within driver.py, but it contains the following functions:
+- **getCookieRecipes**, which crawls through the website sally's baking addiction for cookie recipes used to populate our inspiring set. It is given a list of links to the desired resipies to walk through. It returns a dictionary where the keys are recipe names, and the values are dictionaries mapping each ingredient to its quantity.
+
+## Running the program
+To run the program, first clone this github repository onto your local machine in a directory of your choice.
+Then, simply run the following command from the terminal:
+
+```bash
+python3 generate_cookies.py
+```
