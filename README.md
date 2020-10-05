@@ -4,6 +4,7 @@ The purpose of this program is to use
 ## Cookie_classes.py
 Class Overview:
 
+
 ### BaseIngredient
 BaseIngredient objects have the following attributes:
 - **name**, which is a string representing the name of the ingredient
@@ -28,13 +29,12 @@ Recipe objects have the following attributes:
 - **base_ingredients**, which is a list of BaseIngredient objects 
 - **add_ins**, which is a list of AddIns objects
 
+
 ## generate_cookies.py
 There are no classes within generate_cookies.py, but it contains the following functions:
-- **buildNewRecipe**, which creates 
-
-- **getInspiringSet**, which populates the inspiring set with the dictonary of recipes from the web crawl in driver.py, with the name mapped to the ingredients/quantities. It builds and returns a list of BaseIngredient objects from all of the recipes, AddIns Objects from all the recipes and Recipe Objects for each recipe.
-
-- **writeToFile**, 
+- **buildNewRecipe**, which creates new recipies (or "offspring") utilizing a genetic approach. Essentially, a random pivot point from each AddIns list list is chosen, and then a new recipe is made that is before pivot for add_ins_recipe_1 and after pivot for add_ins_recipe_2. All of the BaseIngredients are added from the given base_ingredients. A new Recipe object is returned with the new base ingredients and add ins.
+- **getInspiringSet**, which populates the inspiring set with the dictonary of recipes from the web crawl in driver.py, with the name mapped to the ingredients/quantities. It builds and returns a list of BaseIngredient objects and AddIns Objects from all of the recipes and Recipe Objects for each recipe.
+- **writeToFile**, which writes a given recipe to a new text (.txt) file. It is given a Recipe object, and utilized the name of the recipe to create a file in the recipies directory. In this file, each ingredient/it's corresponding quantity is written on it's own line .
 
 
 ## driver.py
