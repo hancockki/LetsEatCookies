@@ -2,12 +2,11 @@ import selenium
 import numpy
 import random
 
-from webscrape import getCookieRecipes
+from driver import getCookieRecipes
 
 """
 Attributes:
     name --> the name of the ingredient
-
 
 """
 class BaseIngredients(object):
