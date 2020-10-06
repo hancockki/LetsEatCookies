@@ -1,17 +1,11 @@
 Oreo Cheesecake Cookies
-all-purpose flour 2 cup
-baking soda 0.5 teaspoon
-butter 10 tablespoon
-salt 10 tablespoon
-brown sugar 1 cup
-granulated sugar 0.5 cup
-egg 1
-all-purpose flour 2 cup
-baking soda 0.5 teaspoon
-salted butter 10 tablespoon
-cream cheese 2
-brown sugar 1 cup
-granulated sugar 0.5 cup
-egg 1
-pure vanilla extract 2 teaspoon
-Oreos 18
+2 cup all-purpose flour
+0.5 teaspoon baking soda
+10 tablespoon butter
+10 tablespoon salt
+1 cup brown sugar
+0.5 cup granulated sugar
+1 egg
+2 cup cream cheese
+2 teaspoon vanilla
+18 Oreos
