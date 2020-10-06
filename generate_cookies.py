@@ -37,6 +37,10 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     pivot1 = random.randint(0,size_addins_1)
     pivot2 = random.randint(0,size_addins_2)
 
+    """
+    Here we could add some sort of similarity check, to see if the ingredients we are adding go together!
+
+    """
     for i in range(0,pivot1):
         print("KEYS" , list(add_ins_recipe_1.keys())[i])
 
@@ -124,12 +128,20 @@ def getInspiringSet(recipes):
                 if 'cream cheese' in ingredient[0]:
                     name = "cream cheese"
                 else:
-                    name = ingredient[0]
+                    name = ingredient[0].strip('*')
 
                 # if we got a match
                 if q is not None:
                     quantity = q.group()
                     # edge cases
+                    if 'almonds' in name:
+                        name = 'almond'
+                    if 'vanilla extract' in name:
+                        name = "vanilla"
+                    if 'cinnamon' in name:
+                        name = 'cinnamon'
+                    if 'allspice' in name:
+                        name = "allspice"
                     if 'cornstarch' in quantity:
                         quantity = quantity.replace('cornstarch', 'teaspoon')
                         if "teaspoon" not in quantity:
@@ -179,7 +191,7 @@ def writeToFile(recipe):
     new_recipe.close()
 
 def getName(add_ins):
-    if len(add_ins) > 2:
+    if len(add_ins) > 1:
         int1 = random.randint(0, len(add_ins) - 1)
         int2 = random.randint(0, len(add_ins) - 1)
         

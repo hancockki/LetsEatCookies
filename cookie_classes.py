@@ -3,6 +3,7 @@ import numpy
 import random
 import re
 import flavorpairing as fp
+from itertools import combinations
 
 from driver import getCookieRecipes
 
@@ -104,9 +105,51 @@ class Recipe(object):
         self.name = name
         self.base_ingredients = base_ingredients
         self.add_ins = add_ins
+        self.similarity = self.fitnessFunction()
 
+    """
+    Returns the fitness of our recipe, based on the similarity between our ingredients
+
+    We have the best_fit data structure to account for names of add ins that are unusual, and are not in the data base. In this case, we pair
+    the ingredient to something close to it. In some cases, the ingredient is weird (like cornstarch) and so we ignore those cases
+
+    To calculate fitness, we first use combinations to get all the combinations of two add-ins. Then, we compute the similarity between them, if possible,
+    and add it to the total fitness. If it's not possible, we subtract 1 from the total number of combinations and add 0 to total fitness.
+    Then, we divide total fitness by the number of combinations we were able to calculate the similarity of. This becomes our fitness.
+
+    """
     def fitnessFunction(self):
-        for i in self.add_ins:
-            print(i)
+        # dictionary mapping add in name to 'best fit' name 
+        best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
+            "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
+                "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
+                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
+        
+        total = 0 # initialize total
+        total_num = len(list(combinations(self.add_ins, 2))) # total number of combinations
+        print("total num", total_num)
+        for combination in combinations(self.add_ins, 2):
+            try: # try to find similarity
+                if combination[0] in best_fit: # if it's in our best fit dictionary
+                    ingredient1 = best_fit[combination[0]]
+                else:
+                    ingredient1 = combination[0]
+                if combination[1] in best_fit: #if ingredient 2 is in our best fit dictionary
+                    ingredient2 = best_fit[combination[1]]
+                else:
+                    ingredient2 = combination[1]
+                print("similarity", fp.similarity(ingredient1, ingredient2))
+                total += fp.similarity(ingredient1, ingredient2) # add similarity to total 
+            except KeyError: # we didn't find the ingredient in our database
+                print("not found in database", combination[0], combination[1])
+                total_num -= 1 #subtract 1 from total num conmbinations
+        if total_num > 0: #if we found some similarities
+            total = (total / total_num) * 100
+        else:
+            total = 0
+        print("total similarity", total)
+        return total
+
+
 
 
