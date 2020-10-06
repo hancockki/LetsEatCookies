@@ -227,7 +227,7 @@ def main():
 
 
     # loop to generate cookies
-    for i in range(5):
+    for i in range(2):
         new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
         new_recipe.name = getName(new_recipe.add_ins)
         print("NEWRECIPE")
