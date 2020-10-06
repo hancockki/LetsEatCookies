@@ -60,6 +60,10 @@ def getCookieRecipes(link_list):
 
     # THIS WILL RETURN A DICTIONARY MAPPING INGREDIENTS TO QUANTITIES
     driver.close()
+    with open('recipes.json', 'w') as fp:
+        json.dump(recipes, fp)
+
+    fp.close()
     return recipes
 
 

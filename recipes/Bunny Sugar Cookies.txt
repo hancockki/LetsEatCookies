@@ -1,13 +1,9 @@
 Bunny Sugar Cookies
-all-purpose flour 2
-baking powder 0.5 teaspoon
-salt 0.25 teaspoon
-granulated sugar 0.75 cup
-egg 1
-all-purpose flour 2
-salt 0.25 teaspoon
-granulated sugar 0.75 cup
-egg 1
-pure vanilla extract 2 teaspoon
-almond extract 0.5 teaspoon
-semi-sweet chocolate 2 ounce
+2 cup all-purpose flour
+0.5 teaspoon baking powder
+0.25 teaspoon salt
+0.75 cup granulated sugar
+1 egg
+2 teaspoon pure vanilla extract
+0.5 teaspoon almond extract
+2 ounce semi-sweet chocolate

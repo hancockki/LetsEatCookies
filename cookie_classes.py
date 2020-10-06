@@ -2,6 +2,7 @@ import selenium
 import numpy
 import random
 import re
+import flavorpairing as fp
 
 from driver import getCookieRecipes
 
@@ -103,3 +104,9 @@ class Recipe(object):
         self.name = name
         self.base_ingredients = base_ingredients
         self.add_ins = add_ins
+
+    def fitnessFunction(self):
+        for i in self.add_ins:
+            print(i)
+
+

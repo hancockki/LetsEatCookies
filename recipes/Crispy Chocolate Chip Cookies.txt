@@ -1,20 +1,12 @@
 Crispy Chocolate Chip Cookies
-all-purpose flour 1
-baking soda 0.5 teaspoon
-salt 0.5 teaspoon
-butter 10 tablespoon
-salt 10 tablespoon
-granulated sugar 0.5 cup
-brown sugar 0.25 cup
-egg 1
-all-purpose flour  1
-baking soda 0.5 teaspoon
-salt 0.5 teaspoon
-unsalted butter 10 tablespoon
-granulated sugar 0.5 cup
-brown sugar 0.25 cup
-honey 2 tablespoon
-egg yolk 1
-milk 2 tablespoon
-pure vanilla extract 2 teaspoon
-chocolate chips 1
+1 cup all-purpose flour
+0.5 teaspoon baking soda
+10 tablespoon salt
+10 tablespoon butter
+0.5 cup granulated sugar
+0.25 cup brown sugar
+1 egg
+2 tablespoon honey
+2 tablespoon milk
+2 teaspoon pure vanilla extract
+1 chocolate chips
