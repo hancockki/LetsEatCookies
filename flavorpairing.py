@@ -40,6 +40,7 @@ def pairing(ingr, threshold, cat=None):
     for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
     reverse=True):
         print(key, value)
+    return pairings
 
 
 def request_pairing(ingr, threshold, cat=None):
