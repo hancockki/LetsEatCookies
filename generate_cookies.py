@@ -73,7 +73,7 @@ def generalize_mutation(add_ins_2):
         add_in_list = add_ins_2 #change to 1
     ingredient_pairings = {} 
     for add_in in add_in_list.keys():
-        add_in_amount = add_in_list[add_in].quantities
+        add_in_amount = add_in_list[add_in]   #.quantities
         try: # try to find similarity
             if add_in in best_fit: # if it's in our best fit dictionary
                 ingredient = best_fit[add_in]
