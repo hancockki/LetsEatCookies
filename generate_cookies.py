@@ -12,6 +12,7 @@ from flavorpairing import pairing
 from driver import getCookieRecipes
 from itertools import product
 import flavorpairing as fp
+from operator import attrgetter
 
 # WHERE TO GO...
 
@@ -22,18 +23,20 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     base_ingredients_recipe = {}
     add_ins_recipe = {}
 
+    # randomly pick base ingredients
     for i in base_ingredients.values():
         base_ingredients_recipe[i.name]=i.getQuantity()
     
     #genetic algorithm for add-ins
 
-    num1 = random.randint(0,len(recipe_objects)-1)
-    num2 = random.randint(0,len(recipe_objects)-1)
-
-    add_ins_recipe_1 = recipe_objects[num1].add_ins
-    add_ins_recipe_2 = recipe_objects[num2].add_ins
-
     # ALTERNATIVE
+    #objects_sorted = sorted(recipe_objects)
+    objects_sorted_order = sorted(recipe_objects, key=attrgetter("fitness"), reverse=True)
+    for i in objects_sorted_order:
+        print(i.fitness, i.name)
+    #objects_sorted_order = [c.fitness for c in recipe_objects]
+    add_ins_recipe_1 = objects_sorted_order[0].add_ins
+    add_ins_recipe_2 = objects_sorted_order[1].add_ins
 
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
     print("OUTPUT", output)
@@ -64,8 +67,24 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
                 continue
             values[combination] = similarity
     print(values)
-    print("sorted values", list(sorted(values, key=values.get, reverse=True))[0:4])
+    new_ingredients =  list(sorted(values, key=values.get, reverse=True))[0:len(add_ins_recipe_1)]
+    for ingredient in new_ingredients:
+        if ingredient[0] not in add_ins_recipe.keys():
+            add_ins_recipe[ingredient[0]] = add_ins[ingredient[0]].getQuantity()
+        if ingredient[1] not in add_ins_recipe.keys():
+            add_ins_recipe[ingredient[1]] = add_ins[ingredient[1]].getQuantity()
 
+    name = getName(add_ins_recipe)
+    new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
+
+    """
+    COMMENTING OUT PIVOT CODEE
+
+    num1 = random.randint(0,len(recipe_objects)-1)
+    num2 = random.randint(0,len(recipe_objects)-1)
+
+    add_ins_recipe_1 = recipe_objects[num1].add_ins
+    add_ins_recipe_2 = recipe_objects[num2].add_ins
 
     size_addins_1 = len(add_ins_recipe_1)
     size_addins_2 = len(add_ins_recipe_2)
@@ -73,10 +92,8 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     pivot1 = random.randint(0,size_addins_1)
     pivot2 = random.randint(0,size_addins_2)
 
-    """
     Here we could add some sort of similarity check, to see if the ingredients we are adding go together!
 
-    """
     for i in range(0,pivot1):
         print("KEYS" , list(add_ins_recipe_1.keys())[i])
 
@@ -91,7 +108,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
     #adding in mix-ins ???? discuss later
 
-
+    """
  
     return new_recipe
 
@@ -115,23 +132,24 @@ def generalize_mutation(add_ins_2):
         try: # try to find similarity
             if add_in in best_fit: # if it's in our best fit dictionary
                 ingredient = best_fit[add_in]
-                print("Add in: " + add_in + " Ingredient: " + ingredient)
+                #print("Add in: " + add_in + " Ingredient: " + ingredient)
                 pairs = pairing(ingredient, .5)
                 for key in pairs.keys():
-                    print("Keys: " + key)
+                    #print("Keys: " + key)
                     ingredient_pairings[key] = add_in_amount
-                    print(ingredient_pairings)
+                    #print(ingredient_pairings)
         except KeyError: # we didn't find the ingredient in our database
             print("not found in database")
     dict_keys = list(ingredient_pairings.keys())
     rand_index = random.randint(0, len(dict_keys) - 1)
     rand_key = dict_keys[rand_index]
     #print(add_in_list[rand_key])
-    print(rand_index)
-    print(rand_key)
-    print(ingredient_pairings[rand_key])
+    #print(rand_index)
+    #print(rand_key)
+    #print(ingredient_pairings[rand_key])
     add_in_list[rand_key] = ingredient_pairings[rand_key]
-    print(add_in_list)
+    #print(add_in_list)
+    print(add_in_list[rand_key].name)
     return add_in_list[rand_key]
 
     # Find ingredients that are similar in the .npy files
@@ -281,6 +299,8 @@ def getName(add_ins):
     if len(add_ins) > 1:
         int1 = random.randint(0, len(add_ins) - 1)
         int2 = random.randint(0, len(add_ins) - 1)
+        if int1 == int2:
+            int2 = random.randint(0, int1)
         
         name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
         name2 = list(add_ins.keys())[int2]
@@ -311,18 +331,25 @@ def main():
     base_ingredients, add_ins, recipe_objects = getInspiringSet(recipes)
     for recipe in recipe_objects:
         writeToFile(recipe)
+        recipe.fitnessFunction()
 
 
     # loop to generate cookies
-    for i in range(2):
+    for i in range(5):
         new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
-        new_recipe.name = getName(new_recipe.add_ins)
         print("NEWRECIPE")
         #print(new_recipe.add_ins, new_recipe.base_ingredients)
-        writeToFile(new_recipe)
         new_recipe.fitnessFunction()
+        recipe_objects.append(new_recipe)
 
-    generalize_mutation(add_ins)
+        add_in = new_recipe.replaceIngredient(add_ins)
+        if add_in is not None:
+            add_ins[add_in.name] = add_in
+        new_recipe.name = getName(new_recipe.add_ins)
+        writeToFile(new_recipe)
+
+        for ingredient in new_recipe.add_ins:
+            print("new recipeadd in", ingredient)
 
 
 
