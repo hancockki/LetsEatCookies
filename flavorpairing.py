@@ -60,7 +60,7 @@ pairings: * * *")
     request_pairing("chocolate", 0.1, "spice")
     request_pairing("green tea", 0.6, "fruit")
     request_pairing("coffee", 0.45)
-    request_pairing("raisin", 0.3)
+    request_pairing("oreo", 0.3)
 
 
 if __name__ == "__main__":
