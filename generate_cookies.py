@@ -10,6 +10,8 @@ import json
 from difflib import SequenceMatcher
 
 from driver import getCookieRecipes
+from itertools import product
+import flavorpairing as fp
 
 # WHERE TO GO...
 
@@ -30,6 +32,40 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
 
     add_ins_recipe_1 = recipe_objects[num1].add_ins
     add_ins_recipe_2 = recipe_objects[num2].add_ins
+
+    # ALTERNATIVE
+
+    output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
+    print("OUTPUT", output)
+
+    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
+            "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
+                "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
+                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
+    values = {}
+    for combination in output:
+        if combination[0] == combination[1]:
+            continue
+        else:
+            if combination[0] in best_fit: # if it's in our best fit dictionary
+                ingredient1 = best_fit[combination[0]]
+            else:
+                ingredient1 = combination[0]
+            if combination[1] in best_fit: #if ingredient 2 is in our best fit dictionary
+                ingredient2 = best_fit[combination[1]]
+            else:
+                ingredient2 = combination[1]
+            if ingredient1 == ingredient2:
+                continue
+            try:
+                similarity = fp.similarity(ingredient1, ingredient2)
+            except KeyError:
+                print("whoops! key error")
+                continue
+            values[combination] = similarity
+    print(values)
+    print("sorted values", list(sorted(values, key=values.get, reverse=True))[0:4])
+
 
     size_addins_1 = len(add_ins_recipe_1)
     size_addins_2 = len(add_ins_recipe_2)
@@ -54,6 +90,8 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     name = getName(add_ins_recipe)
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
     #adding in mix-ins ???? discuss later
+
+
  
     return new_recipe
 

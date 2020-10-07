@@ -123,7 +123,7 @@ class Recipe(object):
         best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
                 "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
+                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
         
         total = 0 # initialize total
         total_num = len(list(combinations(self.add_ins, 2))) # total number of combinations
@@ -149,6 +149,10 @@ class Recipe(object):
             total = 0
         print("total similarity", total)
         return total
+
+
+
+    
 
 
 
