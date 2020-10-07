@@ -8,7 +8,7 @@ from cookie_classes import AddIns
 import os
 import json
 from difflib import SequenceMatcher
-
+from flavorpairing import pairing
 from driver import getCookieRecipes
 
 # WHERE TO GO...
@@ -56,6 +56,50 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     #adding in mix-ins ???? discuss later
  
     return new_recipe
+
+"""
+Like 
+"""
+def generalize_mutation(add_ins_2):
+    # dictionary mapping add in name to 'best fit' name 
+    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
+        "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
+            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
+                "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
+    # randomly select if you mutate first or second list
+    add_in_list_num = int1 = random.randint(0, 1)
+    add_in_list = add_ins_2
+    if add_in_list == 1:
+        add_in_list = add_ins_2 #change to 1
+    ingredient_pairings = {} 
+    for add_in in add_in_list.keys():
+        add_in_amount = add_in_list[add_in]   #.quantities
+        try: # try to find similarity
+            if add_in in best_fit: # if it's in our best fit dictionary
+                ingredient = best_fit[add_in]
+                print("Add in: " + add_in + " Ingredient: " + ingredient)
+                pairs = pairing(ingredient, .5)
+                for key in pairs.keys():
+                    print("Keys: " + key)
+                    ingredient_pairings[key] = add_in_amount
+                    print(ingredient_pairings)
+        except KeyError: # we didn't find the ingredient in our database
+            print("not found in database")
+    dict_keys = list(ingredient_pairings.keys())
+    rand_index = random.randint(0, len(dict_keys) - 1)
+    rand_key = dict_keys[rand_index]
+    #print(add_in_list[rand_key])
+    print(rand_index)
+    print(rand_key)
+    print(ingredient_pairings[rand_key])
+    add_in_list[rand_key] = ingredient_pairings[rand_key]
+    print(add_in_list)
+    return add_in_list[rand_key]
+
+    # Find ingredients that are similar in the .npy files
+    # Add ingredients that go well, add the same amount as the similar ingredient (Change this?)
+    # Use the amount of the origional ingredient for the similar
+
 
 
 """
@@ -175,6 +219,11 @@ def getInspiringSet(recipes):
 
     return base_ingredients, add_ins, recipe_objects
 
+
+
+
+
+
 """
 Write recipe to a file
 
@@ -234,6 +283,8 @@ def main():
         #print(new_recipe.add_ins, new_recipe.base_ingredients)
         writeToFile(new_recipe)
         new_recipe.fitnessFunction()
+
+    generalize_mutation(add_ins)
 
 
 
