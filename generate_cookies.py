@@ -14,42 +14,77 @@ from itertools import product
 import flavorpairing as fp
 from operator import attrgetter
 
-
 """
+This method builds a new cookie recipe based on our base_ingredient, add_ins, and recipe_objects. It first picks two recipes probabilistically based
+on their fitness (higher fitness=higher chance of being picked), then picks add-ins from these based on the flavor pairings between the recipes.
 
+@params:
+    base_ingredients --> dictionary mapping the name of the ingredinet (as a string) to the BaseIngredient object
+    add_ins --> dictionary mapping the name of the add-in (as a string) to the addIn object
+    recipe_objects --> list of Recipe objects made so far
+
+@returns:
+    new_recipe --> the new recipe object we've made
 """
 def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
-    base_ingredients_recipe = {}
-    add_ins_recipe = {}
+    base_ingredients_new_recipe = {}
 
     # include one of every base ingredient, picking the quantities probabilistically from those in inspiring set
     for i in base_ingredients.values():
-        base_ingredients_recipe[i.name]=i.getQuantity()
+        base_ingredients_new_recipe[i.name]=i.getQuantity()
     
-    # sort recipe objects by fitness 
-    objects_sorted_order = sorted(recipe_objects, key=attrgetter("fitness"), reverse=True)
-    for i in objects_sorted_order:
-        print(i.fitness, i.name)
+    # here, we get the fitness of each recipe and add to list, which we will use to pick the recipes
+    weights = []
+    for i in recipe_objects:
+        weights.append(i.fitness)
+    
+    #pick two recipes with probability proportional to fitness
+    choices = random.choices(recipe_objects, weights, k=2)
+    add_ins_recipe_1 = choices[0].add_ins
+    add_ins_recipe_2 = choices[1].add_ins
 
-    # pick best 2 by fitness
-    add_ins_recipe_1 = objects_sorted_order[0].add_ins
-    add_ins_recipe_2 = objects_sorted_order[1].add_ins
+    add_ins_new_recipe = getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins)
 
+    # pick a name for our new recipe
+    name = getName(add_ins_new_recipe)
+    new_recipe = Recipe(name=name, base_ingredients=base_ingredients_new_recipe, add_ins=add_ins_new_recipe)
+
+    # TODO::: CALL MUTATION FUNCTIONS with random probability
+ 
+    return new_recipe
+
+"""
+This method picks the add-ins for our new recipe. It does so by computing the similarity between all combinations of two add-ins across our recipe objects. So,
+if one recipe has "chocolate chips, vanilla" and another has "craisins, cream cheese", then it will compute the flavor similarities of (chocolate chips, vanilla), (chocolate chips, craisins),
+(chocolate chips, cream cheese), etc, until all pairs are considered.
+
+Then, a random number between 0 and the number of add-ins total is chosen, and that number of add-ins is picked probabilistically based on their similarities.
+
+@params:
+    add_ins_recipe_1 --> add ins from our first parent recipe
+    add_ins_recipe_2 --> add ins from our second parent recipe
+    add_ins --> OVERALL add_ins data structure across all recipes, storing quantities
+
+@ returns:
+    add_ins_new_recipe --> add ins for our new recipe
+
+"""
+def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins):
     #this is the list of all possible pairs of add-ins from our best two recipes
     #product is a method that returns all the pairs
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
-    #print("OUTPUT", output)
 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
             "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
             "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
     
-    #initialize values dictionary where we map our ingredient pairs to their similarity
-    values = {}
-
+    #initialize ingredient pairs list and similarities list. Used later in the code to pick our add ins
+    ingredient_pairs = []
+    similarities = []
     # loop through the add-ins in our best two recipes
-    already_checked = []
+    already_checked = [] # we make this so we don't compute the exact same tuple twice (the thought here is that multiple
+    #add-ins are the same best fit)
     for combination in output:
         if combination[0] == combination[1]: # if both recipes share an add-in, ignore
             continue
@@ -74,74 +109,30 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
                 already_checked.append((ingredient2, ingredient1))
             except KeyError:
                 print("whoops! key error: ", ingredient1, " and ", ingredient2, " were not able to be compared")
+                ingredient_pairs.append(combination)
+                similarities.append(0.2) # set to low probability
                 continue
-            values[combination] = similarity
-    #print(values)
+            ingredient_pairs.append(combination)
+            similarities.append(similarity)
 
-    #sort keys in our dictionary by their similarity, pick best ones based on random number
-    # add_ins_recipe_1 is the number of add-ins from our first recipe, WE CAN CHANGE THIS
-    new_ingredients =  list(sorted(values, key=values.get, reverse=True))[0:len(add_ins_recipe_1)]
+    #pick random number of add-ins based on probability. Probability determined by similarities
+    num_add_ins = random.randint(0, len(ingredient_pairs)-1) # get number of add-ins
+    new_add_ins = random.choices(ingredient_pairs, similarities, k=num_add_ins) # ingredients we are addings 
 
-    # WE NEED TO IMPROVE THIS maybe
-    for ingredient in new_ingredients:
-        if ingredient[0] not in add_ins_recipe.keys():
-            quantity = add_ins[ingredient[0]].getQuantity()
-            add_ins_recipe[ingredient[0]] = quantity
+    add_ins_new_recipe = {} # initialize dictionary for new add ins 
+
+    # loop through new ingredients list
+    for ingredient in new_add_ins:
+        if ingredient[0] not in add_ins_new_recipe.keys(): # if we haven't added the ingredient already
+            quantity = add_ins[ingredient[0]].getQuantity() # get a quantity
+            add_ins_new_recipe[ingredient[0]] = quantity
             add_ins[ingredient[0]].updateQuantity(quantity)
-        if ingredient[1] not in add_ins_recipe.keys():
+        if ingredient[1] not in add_ins_new_recipe.keys():
             quantity = add_ins[ingredient[1]].getQuantity()
-            add_ins_recipe[ingredient[1]] = add_ins[ingredient[1]].getQuantity()
+            add_ins_new_recipe[ingredient[1]] = add_ins[ingredient[1]].getQuantity()
             add_ins[ingredient[1]].updateQuantity(quantity)
 
-    # pick a name for our new recipe
-    name = getName(add_ins_recipe)
-    new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
-
-    # TODO::: CALL MUTATION FUNCTIONS with random probability
- 
-    return new_recipe
-
-"""
- 
-"""
-def generalize_mutation(add_ins_2):
-    # dictionary mapping add in name to 'best fit' name 
-    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
-        "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
-            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
-    # randomly select if you mutate first or second list
-    add_in_list_num = int1 = random.randint(0, 1)
-    add_in_list = add_ins_2
-    if add_in_list == 1:
-        add_in_list = add_ins_2 #change to 1
-    ingredient_pairings = {} 
-    for add_in in add_in_list.keys():
-        add_in_amount = add_in_list[add_in]   #.quantities
-        try: # try to find similarity
-            if add_in in best_fit: # if it's in our best fit dictionary
-                ingredient = best_fit[add_in]
-                #print("Add in: " + add_in + " Ingredient: " + ingredient)
-                pairs = pairing(ingredient, .5)
-                for key in pairs.keys():
-                    #print("Keys: " + key)
-                    ingredient_pairings[key] = add_in_amount
-                    #print(ingredient_pairings)
-        except KeyError: # we didn't find the ingredient in our database
-            print("not found in database")
-    dict_keys = list(ingredient_pairings.keys())
-    rand_index = random.randint(0, len(dict_keys) - 1)
-    rand_key = dict_keys[rand_index]
-    add_in_list[rand_key] = ingredient_pairings[rand_key]
-    #print(add_in_list)
-    print(add_in_list[rand_key].name)
-    return add_in_list[rand_key]
-
-    # Find ingredients that are similar in the .npy files
-    # Add ingredients that go well, add the same amount as the similar ingredient (Change this?)
-    # Use the amount of the origional ingredient for the similar
-
-
+    return add_ins_new_recipe
 
 """
 In this method, we are building our inspiring set
@@ -181,17 +172,16 @@ def getInspiringSet(recipes):
                 if SequenceMatcher(None, i, ingredient[0]).ratio() > 0.8 or i in ingredient[0]:
                     done = True
                     # match the ingredient quantity
-                    q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
-                    if q is not None: #if we got a match
-                        quantity = q.group()
+                    #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
+                    quantity = ingredient[1].strip(' ')
+                    if quantity is not None: #if we got a match
+                        #quantity = q.group()
                         # edge cases
                         if 'flour' in i:
                             if 'cup' not in quantity:
-                                print("NO CUPSSSSSS", i, quantity)
                                 quantity += " cup"
                         if 'brown' in i:
                             if 'cup' not in quantity:
-                                print("NO CUPSSSSSS", i, quantity)
                                 quantity += " cup"
 
                         if 'egg' in quantity:
@@ -206,18 +196,19 @@ def getInspiringSet(recipes):
                         next_recipe.base_ingredients[i]=quantity
             # this means it is an add-in
             if not done:
-                q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
+                #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
+                quantity = ingredient[1].strip(' ')
                 # edge cases
                 if 'cornstarch' in ingredient[1]:
                     name = 'cornstarch'
                 if 'cream cheese' in ingredient[0]:
                     name = "cream cheese"
                 else:
-                    name = ingredient[0].strip('*')
+                    name = ingredient[0].replace('*','').replace(',','')
 
                 # if we got a match
-                if q is not None:
-                    quantity = q.group()
+                if quantity is not None:
+                    #quantity = q.group()
                     # edge cases
                     if 'almonds' in name:
                         name = 'almond'
@@ -232,8 +223,21 @@ def getInspiringSet(recipes):
                         if "teaspoon" not in quantity:
                             quantity += " teaspoon"
                     if 'cream cheese' in name:
-                        if 'cup' not in quantity:
+                        if len(quantity) < 3:
                             quantity += " cup"
+                    if "semi-sweet" in name:
+                        name = "chocolate chips"
+                        if len(quantity) < 3:
+                            quantity += " cup"
+                    if "chocolate chips" in name:
+                        if len(quantity) < 3:
+                            quantity += " cup"
+                    if "M&M" in name:
+                        if len(quantity) < 3:
+                            quantity += " cup"
+                    if "cinnamon" in name or "cornstarch" in name:
+                        if len(quantity) < 3:
+                            quantity += " teaspoon"
                     # if we already have this add-in
                     if name in add_ins.keys():
                         add_ins[name].updateQuantity(quantity)
@@ -245,7 +249,7 @@ def getInspiringSet(recipes):
                         next_recipe.add_ins[name]=quantity
         recipe_objects.append(next_recipe)
 
-    """
+    
     for value in base_ingredients.values():
         print("Base Ingredient:", value.name)
         print("Quantities:", value.quantities)
@@ -258,7 +262,7 @@ def getInspiringSet(recipes):
         print(recipe.name)
         print(recipe.base_ingredients)
         print(recipe.add_ins)
-    """
+    
 
     return base_ingredients, add_ins, recipe_objects
 
@@ -310,7 +314,7 @@ def writeToFile(recipe):
 Creates a name for the recipe by including two different add-in ingredients to the name.
 """
 def getName(add_ins):    
-    if len(add_ins) > 1:
+    if len(add_ins) > 0:
         int1 = random.randint(0, len(add_ins) - 1)
         int2 = random.randint(0, len(add_ins) - 1)
         if int1 == int2:
@@ -327,7 +331,7 @@ def getName(add_ins):
     else:
         adjectives = ["Delicious", "Yummy", "Special", "World's Best", "Wonderful", "Mouth-Watering"]
         adj = adjectives[random.randint(0,len(adjectives))]
-        name = adj + list(add_ins.keys())[0] + " Cookies"
+        name = adj + " Cookies"
 
     return name
 
@@ -350,7 +354,7 @@ def main():
                 recipes = json.load(json_file)
     except:
         print("json file is empty or does not exist")
-        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/','https://sallysbakingaddiction.com/biscoff-chocolate-chip-cookies/', \
+        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/sweet-salty-potato-chip-toffee-cookies-2/','https://sallysbakingaddiction.com/smores-chocolate-chip-cookies/','https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/','https://sallysbakingaddiction.com/biscoff-chocolate-chip-cookies/', \
             'https://sallysbakingaddiction.com/white-chocolate-cranberry-pistachio-cookies/','https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
         'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/bunny-sugar-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
             'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/', 'https://sallysbakingaddiction.com/oreo-cheesecake-cookies/', \
@@ -367,7 +371,6 @@ def main():
     # loop to generate cookies
     for i in range(10):
         new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
-        print("NEWRECIPE")
         #print(new_recipe.add_ins, new_recipe.base_ingredients)
         new_recipe.fitnessFunction()
         recipe_objects.append(new_recipe)
@@ -382,7 +385,7 @@ def main():
             else:
                 add_ins[add_in].updateQuantity(new_recipe.add_ins[add_in])
 
-        new_recipe.name = getName(new_recipe.add_ins)
+        print("\nNew recipe called: ", new_recipe.name)
         writeToFile(new_recipe)
 
         #for ingredient in new_recipe.add_ins:

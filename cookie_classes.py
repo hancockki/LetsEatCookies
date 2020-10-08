@@ -120,7 +120,7 @@ class Recipe(object):
         self.best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
                 "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate", "chopped Oreos":"chocolate"}
+                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate", "chopped Oreos":"chocolate", "heath bars":"hazelnut"}
         self.fitness = 0
 
     """
@@ -153,7 +153,7 @@ class Recipe(object):
                     ingredient2 = combination[1]
                 total += fp.similarity(ingredient1, ingredient2) # compute similarity and add similarity to total 
             except KeyError: # we didn't find the ingredient in our database
-                print("not found in database", combination[0], combination[1])
+                print("Whoops! key error: ", ingredient1, " or " , ingredient2, " was not found in database")
                 total_num -= 1 #subtract 1 from total num conmbinations
         if total_num > 0: #if we found some similarities
             total = (total / total_num) * 100
@@ -184,7 +184,7 @@ class Recipe(object):
                 for key in pairs.keys(): #Add each ingredient from the pairings to ingredient_pairings dictionary. 
                     ingredient_pairings[key] = add_in_amount #The quantity of pairings remains the same as the AddIn it was paired from
             except KeyError: # we didn't find the ingredient in our database
-                print("not found in database: ", ingredient)
+                print("Whoops! key error: ", ingredient, " was not found in database")
         dict_keys = list(ingredient_pairings.keys()) 
         if len(dict_keys) > 1:
             rand_index = random.randint(0, len(dict_keys) - 1)
