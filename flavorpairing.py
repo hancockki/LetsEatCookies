@@ -37,18 +37,19 @@ def pairing(ingr, threshold, cat=None):
                         pairings[i] = similarity(ingr, i)
             else:
                 pairings[i] = similarity(ingr, i)
-    for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
-    reverse=True):
-        print(key, value)
+    #for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
+    #reverse=True):
+        #print(key, value)
+    return pairings
 
 
 def request_pairing(ingr, threshold, cat=None):
     """Displays a specific pairing to the user in a readable way."""
     if cat:
-        print("\nWhat pairs well with " + ingr + " that is a " + cat + "?")
+        #print("\nWhat pairs well with " + ingr + " that is a " + cat + "?")
         pairing(ingr, threshold, cat)
     else:
-        print("\nWhat pairs well with " + ingr + "?")
+        #print("\nWhat pairs well with " + ingr + "?")
         pairing(ingr, threshold)
 
 
@@ -59,6 +60,7 @@ pairings: * * *")
     request_pairing("chocolate", 0.1, "spice")
     request_pairing("green tea", 0.6, "fruit")
     request_pairing("coffee", 0.45)
+    request_pairing("oreo", 0.3)
 
 
 if __name__ == "__main__":
