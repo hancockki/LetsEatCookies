@@ -14,7 +14,6 @@ from itertools import product
 import flavorpairing as fp
 from operator import attrgetter
 
-# WHERE TO GO...
 
 """
 
@@ -23,14 +22,10 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     base_ingredients_recipe = {}
     add_ins_recipe = {}
 
-    # randomly pick base ingredients
+    # include one of every base ingredient, picking the quantities probabilistically from those in inspiring set
     for i in base_ingredients.values():
         base_ingredients_recipe[i.name]=i.getQuantity()
     
-    #genetic algorithm for add-ins
-
-    # ALTERNATIVE
-
     # sort recipe objects by fitness 
     objects_sorted_order = sorted(recipe_objects, key=attrgetter("fitness"), reverse=True)
     for i in objects_sorted_order:
@@ -391,7 +386,43 @@ def main():
         for ingredient in new_recipe.add_ins:
             print("new recipe add in", ingredient)
 
+    printInstructions(new_recipe)
 
+
+def printInstructions(new_recipe):
+    print("1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.\n")
+    print("2. Whisk the dry ingredients together in a large bowl.\n")
+    for base in new_recipe.base_ingredients.keys():
+        if base == "egg":
+            egg_quantity = int(new_recipe.base_ingredients[base])
+
+    if egg_quantity > 1:
+        egg_string = str(egg_quantity) + " eggs "
+    else:
+        egg_string = "1 egg "
+
+    print("3. In a separate bowl, cream the butter and both sugars together until smooth. Add " + egg_string + "and the rest of the wet ingredients.\n")
+    print("4. Add your wet ingredients to the dry ingredients until combined.\n")
+
+    add_ins_string = "" # string that will store the different add ins, formatted nicely
+    for add_in in new_recipe.add_ins.keys():
+        #print(add_in)
+        add_ins_string += add_in + ", "
+        last_add_in = add_in
+        last_add_in_string = add_in + ", "
+    
+    add_ins_s = add_ins_string[:len(add_ins_string)-len(last_add_in_string)]
+    add_ins_s += "and " + last_add_in
+
+    print("5. Add the " + add_ins_s + " and mix until all combined, and a dough forms.\n")
+    print("6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.\n")
+        
+    min_time = random.randint(7,10)
+    max_time = random.randint(10, 15)
+
+    print("7. Bake for " + str(min_time) + "-" + str(max_time) + " minutes or until edges appear set.\n")
+    print("8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.\n")
+    print("9. Enjoy!\n")
 
 """
 Driver for the entire program
