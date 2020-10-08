@@ -140,7 +140,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     @returns:
         returns a single AddIn object
 """
-def generalize_mutation(add_in_list):
+def mutation(add_in_list):
     # dictionary mapping add in name to 'best fit' name 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
         "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
@@ -357,7 +357,7 @@ def main():
         for ingredient in new_recipe.add_ins:
             print("new recipeadd in", ingredient)
     
-    generalize_mutation(add_ins)
+    mutation(add_ins)
 
 
 """
