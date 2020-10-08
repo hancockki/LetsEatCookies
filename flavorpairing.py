@@ -46,10 +46,10 @@ def pairing(ingr, threshold, cat=None):
 def request_pairing(ingr, threshold, cat=None):
     """Displays a specific pairing to the user in a readable way."""
     if cat:
-        print("\nWhat pairs well with " + ingr + " that is a " + cat + "?")
+        #print("\nWhat pairs well with " + ingr + " that is a " + cat + "?")
         pairing(ingr, threshold, cat)
     else:
-        print("\nWhat pairs well with " + ingr + "?")
+        #print("\nWhat pairs well with " + ingr + "?")
         pairing(ingr, threshold)
 
 

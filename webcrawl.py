@@ -36,7 +36,7 @@ def getCookieRecipes(link_list):
         driver.get (link) #open link to recipe
         # now, we want to find all of our ingredients and quantities
         title = driver.find_element_by_class_name("tasty-recipes-title").text #get the ingredients class from html
-        print(title)
+        #print(title)
         recipes[title] = []
         ingredients = driver.find_element_by_class_name("tasty-recipes-ingredients") #get the ingredients class from html
         list_items = ingredients.find_elements_by_tag_name("li") # get list items for ingredients
@@ -56,7 +56,7 @@ def getCookieRecipes(link_list):
             #string_ingredient += ingredient
             recipes[title].append([ingredient, string_ingredient])
 
-    print(recipes)
+    #print(recipes)
 
     # THIS WILL RETURN A DICTIONARY MAPPING INGREDIENTS TO QUANTITIES
     driver.close()

@@ -38,7 +38,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     #this is the list of all possible pairs of add-ins from our best two recipes
     #product is a method that returns all the pairs
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
-    print("OUTPUT", output)
+    #print("OUTPUT", output)
 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
@@ -65,9 +65,9 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
             if ingredient1 == ingredient2: # again, if they are the same, ignore
                 continue
             if (ingredient1, ingredient2) in already_checked:
-                print("ALREADY CHECKED the pair", ingredient1, " ", ingredient2)
+                #print("ALREADY CHECKED the pair", ingredient1, " ", ingredient2)
                 continue
-            print("now checking", ingredient1, " ", ingredient2)
+            #print("now checking", ingredient1, " ", ingredient2)
             try:
                 similarity = fp.similarity(ingredient1, ingredient2)
                 already_checked.append((ingredient1, ingredient2))
@@ -76,7 +76,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
                 print("whoops! key error: ", ingredient1, " and ", ingredient2, " were not able to be compared")
                 continue
             values[combination] = similarity
-    print(values)
+    #print(values)
 
     #sort keys in our dictionary by their similarity, pick best ones based on random number
     # add_ins_recipe_1 is the number of add-ins from our first recipe, WE CAN CHANGE THIS
@@ -98,44 +98,11 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
 
     # TODO::: CALL MUTATION FUNCTIONS with random probability
-
-    """
-    COMMENTING OUT PIVOT CODEE
-
-    num1 = random.randint(0,len(recipe_objects)-1)
-    num2 = random.randint(0,len(recipe_objects)-1)
-
-    add_ins_recipe_1 = recipe_objects[num1].add_ins
-    add_ins_recipe_2 = recipe_objects[num2].add_ins
-
-    size_addins_1 = len(add_ins_recipe_1)
-    size_addins_2 = len(add_ins_recipe_2)
-
-    pivot1 = random.randint(0,size_addins_1)
-    pivot2 = random.randint(0,size_addins_2)
-
-    Here we could add some sort of similarity check, to see if the ingredients we are adding go together!
-
-    for i in range(0,pivot1):
-        print("KEYS" , list(add_ins_recipe_1.keys())[i])
-
-        add_ins_recipe[list(add_ins_recipe_1.keys())[i]] = add_ins[list(add_ins_recipe_1.keys())[i]].getQuantity()
-    for i in range(pivot2, size_addins_2):
-        #add_ins_recipe.append({add_ins_recipe_2[i].keys() : add_ins[add_ins_recipe_2[i].keys()].getQuantity()})
-        #add_ins_recipe.append({add_ins_recipe_2[i].name : add_ins_recipe_2[i].getQuantity()})
-        #print("NEW QUANTITY", add_ins[list(add_ins_recipe_2[i].keys())[0]].getQuantity())
-        add_ins_recipe[list(add_ins_recipe_2.keys())[i]] = add_ins[list(add_ins_recipe_2.keys())[i]].getQuantity()
-
-    name = getName(add_ins_recipe)
-    new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
-    #adding in mix-ins ???? discuss later
-
-    """
  
     return new_recipe
 
 """
-Like 
+ 
 """
 def generalize_mutation(add_ins_2):
     # dictionary mapping add in name to 'best fit' name 
@@ -165,10 +132,6 @@ def generalize_mutation(add_ins_2):
     dict_keys = list(ingredient_pairings.keys())
     rand_index = random.randint(0, len(dict_keys) - 1)
     rand_key = dict_keys[rand_index]
-    #print(add_in_list[rand_key])
-    #print(rand_index)
-    #print(rand_key)
-    #print(ingredient_pairings[rand_key])
     add_in_list[rand_key] = ingredient_pairings[rand_key]
     #print(add_in_list)
     print(add_in_list[rand_key].name)
@@ -282,6 +245,7 @@ def getInspiringSet(recipes):
                         next_recipe.add_ins[name]=quantity
         recipe_objects.append(next_recipe)
 
+    """
     for value in base_ingredients.values():
         print("Base Ingredient:", value.name)
         print("Quantities:", value.quantities)
@@ -294,6 +258,7 @@ def getInspiringSet(recipes):
         print(recipe.name)
         print(recipe.base_ingredients)
         print(recipe.add_ins)
+    """
 
     return base_ingredients, add_ins, recipe_objects
 
@@ -312,15 +277,21 @@ def writeToFile(recipe):
             new_recipe.write(str(value) + " " + key + "\n")
     new_recipe.close()
 
-def getName(add_ins):
+"""
+"""
+def getName(add_ins):    
     if len(add_ins) > 1:
         int1 = random.randint(0, len(add_ins) - 1)
         int2 = random.randint(0, len(add_ins) - 1)
         if int1 == int2:
             int2 = random.randint(0, int1)
         
-        name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
-        name2 = list(add_ins.keys())[int2]
+        name1 = ""
+        name2 = ""
+        # to make sure we aren't adding the same add in ingredient to the name
+        while name1 != name2:
+            name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
+            name2 = list(add_ins.keys())[int2]
 
         name = name1.capitalize() + " " + name2.capitalize() + " Cookies"
     else:
@@ -361,7 +332,6 @@ def main():
         writeToFile(recipe)
         recipe.fitnessFunction()
 
-
     # loop to generate cookies
     for i in range(10):
         new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
@@ -372,7 +342,7 @@ def main():
 
         add_in = new_recipe.mutation(add_ins)
         if add_in is not None:
-            print("ADDED========", add_in)
+            #print("ADDED========", add_in)
             if add_in not in add_ins.keys(): # if we havent already created a add in object for this
                 new_add_in = AddIns(name=add_in, quantities={})  #create new add_in object for this 
                 new_add_in.updateQuantity(new_recipe.add_ins[add_in])
@@ -383,12 +353,19 @@ def main():
         new_recipe.name = getName(new_recipe.add_ins)
         writeToFile(new_recipe)
 
-        for ingredient in new_recipe.add_ins:
-            print("new recipe add in", ingredient)
+        #for ingredient in new_recipe.add_ins:
+            #print("new recipe add in", ingredient)
 
-    printInstructions(new_recipe)
+        printInstructions(new_recipe)
 
 
+"""
+Prints out the recipe instructions to be called in main. Mostly hard-coded, but specifically includes the 
+recipe add-ins, the correct quantity of eggs, and a narrowly-randomized bake-time.
+
+@params:
+    new_recipe --> the current recipe for which we want to print the instructions
+"""
 def printInstructions(new_recipe):
     print("1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.\n")
     print("2. Whisk the dry ingredients together in a large bowl.\n")
