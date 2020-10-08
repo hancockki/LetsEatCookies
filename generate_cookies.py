@@ -91,7 +91,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     # pick a name for our new recipe
     name = getName(add_ins_recipe)
 
-    #mutation_add_in = mutation(add_ins_recipe)
+    mutation_add_in = mutation(add_ins_recipe)
     #add_ins_recipe[mutation_add_in.name] = mutation_add_in
 
 
@@ -168,6 +168,9 @@ def mutation(add_in_list):
     rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
     #add_in_list[rand_key] = ingredient_pairings[rand_key]
     #print(add_in_list)
+    print("_________________________________________________")
+    print(ingredient_pairings)
+    print(rand_key)
     return ingredient_pairings[rand_key]
 
 
