@@ -9,7 +9,7 @@ import os
 import json
 from difflib import SequenceMatcher
 from flavorpairing import pairing
-from driver import getCookieRecipes
+from webcrawl import getCookieRecipes
 from itertools import product
 import flavorpairing as fp
 from operator import attrgetter
@@ -31,23 +31,32 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
 
     # ALTERNATIVE
     #objects_sorted = sorted(recipe_objects)
+
+    # sort recipe objects by fitness 
     objects_sorted_order = sorted(recipe_objects, key=attrgetter("fitness"), reverse=True)
     for i in objects_sorted_order:
         print(i.fitness, i.name)
-    #objects_sorted_order = [c.fitness for c in recipe_objects]
+
+    # pick best 2 by fitness
     add_ins_recipe_1 = objects_sorted_order[0].add_ins
     add_ins_recipe_2 = objects_sorted_order[1].add_ins
 
+    #this is the list of all possible pairs of add-ins from our best two recipes
+    #product is a method that returns all the pairs
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
     print("OUTPUT", output)
 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
-                "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
+            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
+            "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
+    
+    #initialize values dictionary where we map our ingredient pairs to their similarity
     values = {}
+
+    # loop through the add-ins in our best two recipes
     for combination in output:
-        if combination[0] == combination[1]:
+        if combination[0] == combination[1]: # if both recipes share an add-in, ignore
             continue
         else:
             if combination[0] in best_fit: # if it's in our best fit dictionary
@@ -58,24 +67,32 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
                 ingredient2 = best_fit[combination[1]]
             else:
                 ingredient2 = combination[1]
-            if ingredient1 == ingredient2:
+            if ingredient1 == ingredient2: # again, if they are the same, ignore
                 continue
             try:
                 similarity = fp.similarity(ingredient1, ingredient2)
             except KeyError:
-                print("whoops! key error")
+                print("whoops! key error: ", ingredient1, " and ", ingredient2, " were not able to be compared")
                 continue
             values[combination] = similarity
     print(values)
+
+    #sort keys in our dictionary by their similarity, pick best ones based on random number
+    # add_ins_recipe_1 is the number of add-ins from our first recipe, WE CAN CHANGE THIS
     new_ingredients =  list(sorted(values, key=values.get, reverse=True))[0:len(add_ins_recipe_1)]
+
+    # WE NEED TO IMPROVE THIS maybe
     for ingredient in new_ingredients:
         if ingredient[0] not in add_ins_recipe.keys():
             add_ins_recipe[ingredient[0]] = add_ins[ingredient[0]].getQuantity()
         if ingredient[1] not in add_ins_recipe.keys():
             add_ins_recipe[ingredient[1]] = add_ins[ingredient[1]].getQuantity()
 
+    # pick a name for our new recipe
     name = getName(add_ins_recipe)
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
+
+    # TODO::: CALL MUTATION FUNCTIONS with random probability
 
     """
     COMMENTING OUT PIVOT CODEE
@@ -275,11 +292,6 @@ def getInspiringSet(recipes):
 
     return base_ingredients, add_ins, recipe_objects
 
-
-
-
-
-
 """
 Write recipe to a file
 
@@ -315,6 +327,7 @@ def getName(add_ins):
 
 
 def main():
+    # check to see if our data set is already hard-coded
     print("Checking to see if inspiring set json already exists")
     try:
         if os.path.getsize('recipes.json') > 0:

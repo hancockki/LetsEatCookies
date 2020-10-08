@@ -5,7 +5,7 @@ import re
 import flavorpairing as fp
 from itertools import combinations
 
-from driver import getCookieRecipes
+from webcrawl import getCookieRecipes
 
 class BaseIngredient(object):
     def __init__(self, name, quantities):
@@ -128,11 +128,11 @@ class Recipe(object):
         # dictionary mapping add in name to 'best fit' name 
     
         total = 0 # initialize total
-        total_num = len(list(combinations(self.add_ins, 2))) # total number of combinations
+        total_num = len(list(combinations(self.add_ins, 2))) # total number of combinations of two add-ins
         print("total num", total_num)
         for combination in combinations(self.add_ins, 2):
             try: # try to find similarity
-                if combination[0] in self.best_fit: # if it's in our best fit dictionary
+                if combination[0] in self.best_fit: # if it's in our best fit dictionary, take the value instead of the real name
                     ingredient1 = self.best_fit[combination[0]]
                 else:
                     ingredient1 = combination[0]
@@ -141,7 +141,7 @@ class Recipe(object):
                 else:
                     ingredient2 = combination[1]
                 print("similarity", fp.similarity(ingredient1, ingredient2))
-                total += fp.similarity(ingredient1, ingredient2) # add similarity to total 
+                total += fp.similarity(ingredient1, ingredient2) # compute similarity and add similarity to total 
             except KeyError: # we didn't find the ingredient in our database
                 print("not found in database", combination[0], combination[1])
                 total_num -= 1 #subtract 1 from total num conmbinations
@@ -151,13 +151,17 @@ class Recipe(object):
             total = 0
         print("total similarity", total)
         self.fitness = total
-        
-
 
     """
     Add an ingredient based on the flavor pairings list.
+
+    @params:
+        add_ins_2 --> the list of add-ins 
+
+    @returns:
+        new_ingredient --> 
     """ 
-    def addIngredient(self, add_ins_2):
+    def addRandomIngredient(self, add_ins_2):
         # dictionary mapping add in name to 'best fit' name 
         # randomly select if you mutate first or second list
         add_in_list_num = int1 = random.randint(0, 1)
@@ -218,7 +222,7 @@ class Recipe(object):
         print("new ingredients list", new_ingredients)
         if len(new_ingredients) > 1: # if we found an ingredient, add it to recipe
             rand_item = random.randint(0, len(new_ingredients)-1)
-            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {"0.5 cup":1})
+            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {"0.5 cup":1}) # Need to determine what quantity to put
             key_to_replace = list(self.add_ins.keys())[rand_int]
             del self.add_ins[key_to_replace]
             self.add_ins[new_ingredient.name] = new_ingredient.getQuantity()
