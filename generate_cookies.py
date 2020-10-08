@@ -304,7 +304,6 @@ def writeToFile(recipe):
         new_recipe.write("7. Bake for " + str(min_time) + "-" + str(max_time) + " minutes or until edges appear set.\n")
         new_recipe.write("8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.\n")
         new_recipe.write("9. Enjoy!\n")
-
     new_recipe.close()
 
 """
@@ -319,7 +318,7 @@ def getName(add_ins):
         name1 = ""
         name2 = ""
         # to make sure we aren't adding the same add in ingredient to the name
-        while name1 != name2:
+        while name1 == name2:
             name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
             name2 = list(add_ins.keys())[int2]
 
