@@ -130,53 +130,6 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     return new_recipe
 
 """
-
-    Returns an add in object to be added to the 
-    Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
-        
-    @params:
-        quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
-    @returns:
-        returns the quantity
-"""
-def generalize_mutation(add_ins_1, add_ins_2):
-    # dictionary mapping add in name to 'best fit' name 
-    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
-        "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
-            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
-    add_in_list_num = int1 = random.randint(0, 1) # randomly select if you mutate first or second list
-    add_in_list = add_ins_1 #Randomly choose if you use the first pivot or the second pivot
-    if add_in_list_num == 1:
-        add_in_list = add_ins_2 
-    ingredient_pairings = {} 
-    for add_in in add_in_list.keys():
-        add_in_amount = add_in_list[add_in]   #.quantities
-        try: # try to find similarity
-            if add_in in best_fit: # if it's in our best fit dictionary
-                ingredient = best_fit[add_in]
-                pairs = pairing(ingredient, .5)
-                for key in pairs.keys():
-                    ingredient_pairings[key] = add_in_amount
-        except KeyError: # we didn't find the ingredient in our database
-            print("not found in database")
-    dict_keys = list(ingredient_pairings.keys())
-    rand_index = random.randint(0, len(dict_keys) - 1)
-    rand_key = dict_keys[rand_index]
-    #print(add_in_list[rand_key])
-    #print(rand_index)
-    #print(rand_key)
-    #print(ingredient_pairings[rand_key])
-    add_in_list[rand_key] = ingredient_pairings[rand_key]
-    #print(add_in_list)
-    print(add_in_list[rand_key].name)
-    return add_in_list[rand_key]
-
-    # Find ingredients that are similar in the .npy files
-    # Add ingredients that go well, add the same amount as the similar ingredient (Change this?)
-    # Use the amount of the origional ingredient for the similar
-
-"""
     Returns a single AddIn object to be added to a new recipe
     Walks through all of the of the AddIn ingredients of a new recipe, and adds ingredients that pair within .5 of 
     each AddIn ingredient to a dictonary called ingredient_pairings. They keys are new ingredient names from the .npy
@@ -187,7 +140,7 @@ def generalize_mutation(add_ins_1, add_ins_2):
     @returns:
         returns a single AddIn object
 """
-def generalize_mutation2(add_in_list):
+def generalize_mutation(add_in_list):
     # dictionary mapping add in name to 'best fit' name 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
         "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
@@ -197,19 +150,17 @@ def generalize_mutation2(add_in_list):
     for add_in in add_in_list.keys(): #for each add in in the new recipe
         add_in_amount = add_in_list[add_in] 
         try: # try to find similarity
-            ingredient = add_in
-            if add_in in best_fit: 
+            ingredient = add_in 
+            if add_in in best_fit: #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
                 ingredient = best_fit[add_in] 
-            pairs = pairing(ingredient, .5)
-            #print("Ingredient: " + ingredient)
-            for key in pairs.keys():
-                ingredient_pairings[key] = add_in_amount
+            pairs = pairing(ingredient, .5) #Finds ingredients that pair well with each add in
+            for key in pairs.keys(): #Add each ingredient from the pairings to ingredient_pairings dictionary. 
+                ingredient_pairings[key] = add_in_amount #The quantity of pairings remains the same as the AddIn it was paired from
         except KeyError: # we didn't find the ingredient in our database
             print("not found in database")
-    dict_keys = list(ingredient_pairings.keys())
+    dict_keys = list(ingredient_pairings.keys()) 
     rand_index = random.randint(0, len(dict_keys) - 1)
-    rand_key = dict_keys[rand_index]
-    #print(ingredient_pairings)
+    rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
     return ingredient_pairings[rand_key]
 
 
@@ -406,7 +357,7 @@ def main():
         for ingredient in new_recipe.add_ins:
             print("new recipeadd in", ingredient)
     
-    generalize_mutation2(add_ins)
+    generalize_mutation(add_ins)
 
 
 """
