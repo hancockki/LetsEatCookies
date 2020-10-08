@@ -91,8 +91,12 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     # pick a name for our new recipe
     name = getName(add_ins_recipe)
 
-    mutation_add_in = mutation(add_ins_recipe)
-    #add_ins_recipe[mutation_add_in.name] = mutation_add_in
+    mutation_name, mutation_quantity = mutation(add_ins_recipe)
+    #print("*********************")
+    #print(mutation_name)
+    #print(mutation_quantity)
+    #print(add_ins_recipe)
+    #add_ins_recipe[mutation_name] = mutation_quantity
 
 
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
@@ -158,7 +162,7 @@ def mutation(add_in_list):
             ingredient = add_in 
             if add_in in best_fit: #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
                 ingredient = best_fit[add_in] 
-            pairs = pairing(ingredient, .5) #Finds ingredients that pair well with each add in
+            pairs = pairing(ingredient, .52) #Finds ingredients that pair well with each add in
             for key in pairs.keys(): #Add each ingredient from the pairings to ingredient_pairings dictionary. 
                 ingredient_pairings[key] = add_in_amount #The quantity of pairings remains the same as the AddIn it was paired from
         except KeyError: # we didn't find the ingredient in our database
@@ -167,13 +171,25 @@ def mutation(add_in_list):
     rand_index = random.randint(0, len(dict_keys) - 1)
     rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
     #add_in_list[rand_key] = ingredient_pairings[rand_key]
-    #print(add_in_list)
+    print(add_in_list)
     print("_________________________________________________")
     print(ingredient_pairings)
     print(rand_key)
-    return ingredient_pairings[rand_key]
+    return rand_key, ingredient_pairings[rand_key]
+    #return add_in_listc
+
+"""
+
+"""
+def decide_mutation():
+     # determine whether a mutation should occur by some probability (40% likely to mutate)
+        mutate = random.randint(0,100)
+        if mutate < 40:
+            return True
+        return False
 
 
+    
 
 
 
@@ -368,8 +384,6 @@ def main():
             print("new recipeadd in", ingredient)
     
     
-
-
 """
 Driver for the entire program
 """
