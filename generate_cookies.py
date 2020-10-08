@@ -307,6 +307,7 @@ def writeToFile(recipe):
     new_recipe.close()
 
 """
+Creates a name for the recipe by including two different add-in ingredients to the name.
 """
 def getName(add_ins):    
     if len(add_ins) > 1:
@@ -322,9 +323,11 @@ def getName(add_ins):
             name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
             name2 = list(add_ins.keys())[int2]
 
-        name = name1.capitalize() + " " + name2.capitalize() + " Cookies"
+        name = name1.title() + " " + name2.title() + " Cookies"
     else:
-        name = "name is boring"
+        adjectives = ["Delicious", "Yummy", "Special", "World's Best", "Wonderful", "Mouth-Watering"]
+        adj = adjectives[random.randint(0,len(adjectives))]
+        name = adj + list(add_ins.keys())[0] + " Cookies"
 
     return name
 
