@@ -91,7 +91,7 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     # pick a name for our new recipe
     name = getName(add_ins_recipe)
 
-    mutation_add_in = mutation(add_ins_recipe)
+    #mutation_add_in = mutation(add_ins_recipe)
     #add_ins_recipe[mutation_add_in.name] = mutation_add_in
 
 
