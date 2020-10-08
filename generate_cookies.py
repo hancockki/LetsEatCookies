@@ -130,31 +130,34 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     return new_recipe
 
 """
-Like 
+
+    Returns an add in object to be added to the 
+    Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
+        
+    @params:
+        quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
+    @returns:
+        returns the quantity
 """
-def generalize_mutation(add_ins_2):
+def generalize_mutation(add_ins_1, add_ins_2):
     # dictionary mapping add in name to 'best fit' name 
     best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
         "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
             "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
                 "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
-    # randomly select if you mutate first or second list
-    add_in_list_num = int1 = random.randint(0, 1)
-    add_in_list = add_ins_2
-    if add_in_list == 1:
-        add_in_list = add_ins_2 #change to 1
+    add_in_list_num = int1 = random.randint(0, 1) # randomly select if you mutate first or second list
+    add_in_list = add_ins_1 #Randomly choose if you use the first pivot or the second pivot
+    if add_in_list_num == 1:
+        add_in_list = add_ins_2 
     ingredient_pairings = {} 
     for add_in in add_in_list.keys():
         add_in_amount = add_in_list[add_in]   #.quantities
         try: # try to find similarity
             if add_in in best_fit: # if it's in our best fit dictionary
                 ingredient = best_fit[add_in]
-                #print("Add in: " + add_in + " Ingredient: " + ingredient)
                 pairs = pairing(ingredient, .5)
                 for key in pairs.keys():
-                    #print("Keys: " + key)
                     ingredient_pairings[key] = add_in_amount
-                    #print(ingredient_pairings)
         except KeyError: # we didn't find the ingredient in our database
             print("not found in database")
     dict_keys = list(ingredient_pairings.keys())
@@ -172,6 +175,39 @@ def generalize_mutation(add_ins_2):
     # Find ingredients that are similar in the .npy files
     # Add ingredients that go well, add the same amount as the similar ingredient (Change this?)
     # Use the amount of the origional ingredient for the similar
+
+"""
+
+"""
+def generalize_mutation2(add_in_list):
+    # dictionary mapping add in name to 'best fit' name 
+    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
+        "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
+            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
+                "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom"}
+    ingredient_pairings = {} 
+    for add_in in add_in_list.keys():
+        add_in_amount = add_in_list[add_in]   #.quantities
+        try: # try to find similarity
+            if add_in in best_fit: # if it's in our best fit dictionary
+                ingredient = best_fit[add_in]
+                pairs = pairing(ingredient, .5)
+                for key in pairs.keys():
+                    ingredient_pairings[key] = add_in_amount
+        except KeyError: # we didn't find the ingredient in our database
+            print("not found in database")
+    dict_keys = list(ingredient_pairings.keys())
+    rand_index = random.randint(0, len(dict_keys) - 1)
+    rand_key = dict_keys[rand_index]
+    #print(add_in_list[rand_key])   print(rand_index)  print(rand_key)  print(ingredient_pairings[rand_key]) print(add_in_list)
+    return ingredient_pairings[rand_key]
+
+    # Find ingredients that are similar in the .npy files
+    # Add ingredients that go well, add the same amount as the similar ingredient (Change this?)
+    # Use the amount of the origional ingredient for the similar
+
+
+
 
 
 
@@ -363,6 +399,8 @@ def main():
 
         for ingredient in new_recipe.add_ins:
             print("new recipeadd in", ingredient)
+    
+    generalize_mutation2(add_ins)
 
 
 
