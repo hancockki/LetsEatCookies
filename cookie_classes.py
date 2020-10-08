@@ -4,9 +4,15 @@ import random
 import re
 import flavorpairing as fp
 from itertools import combinations
-
 from webcrawl import getCookieRecipes
 
+
+"""
+Attributes:
+    name --> str of the name
+    quantities --> dictionary where keys are strings of the name of the quantity and value is the ingredients
+
+"""
 class BaseIngredient(object):
     def __init__(self, name, quantities):
         self.name = name
@@ -45,14 +51,14 @@ class BaseIngredient(object):
     """
     Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
     
-    
+    @params:
+        quantity --> the quantity whose value in the quantities dict we need to update
     """
     def updateQuantity(self, quantity):
         if quantity in self.quantities:
             self.quantities[quantity]+=1
         else:
             self.quantities.setdefault(quantity, 1)
-
 
 
 """
@@ -67,7 +73,13 @@ class AddIns(object):
         self.quantities = quantities
 
     """
-
+    Returns a quantity that should correspond with a certain ingredient.
+    Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
+        
+    @params:
+        quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
+    @returns:
+        returns the quantity
     """
     def getQuantity(self):
         new_quantity = 0
@@ -164,7 +176,6 @@ class Recipe(object):
         ingredient_pairings = {} 
         for add_in in add_in_list.keys(): #for each add in in the new recipe
             add_in_amount = add_in_list[add_in] # this is an add-in object
-            #print("add in amount", add_in_amount)
             try: # try to find similarity
                 ingredient = add_in 
                 if add_in in self.best_fit: #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
@@ -178,7 +189,6 @@ class Recipe(object):
         if len(dict_keys) > 1:
             rand_index = random.randint(0, len(dict_keys) - 1)
             rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
-            #print(ingredient_pairings)
             self.add_ins[rand_key] = ingredient_pairings[rand_key].getQuantity() # update the add_ins for this recipe and corresponding quantity
             return rand_key #return the new ingredient to be added 
         else:
@@ -198,9 +208,7 @@ class Recipe(object):
         rand_int = random.randint(0, len(self.add_ins) - 1) # index to delete
         rand_int2 = random.randint(0, len(self.add_ins)-1) #index of what to pair new flavor with
         try: # try calling pairing function
-            #print(list(self.add_ins.keys())[rand_int2])
             if list(self.add_ins.keys())[rand_int2] in self.best_fit.keys(): # if its in best fit dictionary
-                #print(list(self.add_ins.keys())[rand_int2])
                 ingredient = self.best_fit[list(self.add_ins.keys())[rand_int2]] # set ingredient to best fit
             else:
                 ingredient = list(self.add_ins.keys())[rand_int2] # else set ingredient accordingly
@@ -208,7 +216,6 @@ class Recipe(object):
         except KeyError:
             print("couldnt pair ingredient")
             return
-        #print("new ingredients list", new_ingredients)
         if len(new_ingredients) > 1: # if we found an ingredient, add it to recipe
             rand_item = random.randint(0, len(new_ingredients)-1)
             new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {"0.5 cup":1}) # Need to determine what quantity to put

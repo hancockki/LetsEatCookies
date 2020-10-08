@@ -270,11 +270,41 @@ Write recipe to a file
 """
 def writeToFile(recipe):
     with open("recipes/" + recipe.name + ".txt", 'w') as new_recipe:
+        egg_quantity = 0
         new_recipe.write(recipe.name + "\n")
         for key, value in recipe.base_ingredients.items():
             new_recipe.write(str(value) + " " + key + "\n")
+            if key == "egg":
+                egg_quantity = int(recipe.base_ingredients[key])
         for key, value in recipe.add_ins.items():
             new_recipe.write(str(value) + " " + key + "\n")
+
+        new_recipe.write("\nInstructions:\n")
+        new_recipe.write("1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.\n")
+        new_recipe.write("2. Whisk the dry ingredients together in a large bowl.\n")
+
+        if egg_quantity > 1:
+            egg_string = str(egg_quantity) + " eggs "
+        else:
+            egg_string = "1 egg "
+
+        new_recipe.write("3. In a separate bowl, cream the butter and both sugars together until smooth. Add " + egg_string + "and the rest of the wet ingredients.\n")
+        new_recipe.write("4. Add your wet ingredients to the dry ingredients until combined.\n")
+        add_ins_string = "" # string that will store the different add ins, formatted nicely
+        for add_in in recipe.add_ins.keys():
+            add_ins_string += add_in + ", "
+            last_add_in = add_in
+            last_add_in_string = add_in + ", "
+        add_ins_s = add_ins_string[:len(add_ins_string)-len(last_add_in_string)]
+        add_ins_s += "and " + last_add_in
+        new_recipe.write("5. Add the " + add_ins_s + " and mix until all combined, and a dough forms.\n")
+        new_recipe.write("6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.\n")
+        min_time = random.randint(7,10)
+        max_time = random.randint(10, 15)
+        new_recipe.write("7. Bake for " + str(min_time) + "-" + str(max_time) + " minutes or until edges appear set.\n")
+        new_recipe.write("8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.\n")
+        new_recipe.write("9. Enjoy!\n")
+
     new_recipe.close()
 
 """
@@ -356,16 +386,18 @@ def main():
         #for ingredient in new_recipe.add_ins:
             #print("new recipe add in", ingredient)
 
-        printInstructions(new_recipe)
+
+        #printInstructions(new_recipe)
 
 
 """
+
 Prints out the recipe instructions to be called in main. Mostly hard-coded, but specifically includes the 
 recipe add-ins, the correct quantity of eggs, and a narrowly-randomized bake-time.
 
 @params:
     new_recipe --> the current recipe for which we want to print the instructions
-"""
+
 def printInstructions(new_recipe):
     print("1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.\n")
     print("2. Whisk the dry ingredients together in a large bowl.\n")
@@ -399,7 +431,7 @@ def printInstructions(new_recipe):
 
     print("7. Bake for " + str(min_time) + "-" + str(max_time) + " minutes or until edges appear set.\n")
     print("8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.\n")
-    print("9. Enjoy!\n")
+    print("9. Enjoy!\n")"""
 
 """
 Driver for the entire program
