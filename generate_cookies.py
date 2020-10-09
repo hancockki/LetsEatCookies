@@ -94,12 +94,14 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     mutation_name, mutation_quantity = mutation(add_ins_recipe)
     #print("*********************")
     #print(mutation_name)
-    #print(mutation_quantity)
+    #print(mutation_quantity)c
     #print(add_ins_recipe)
     #add_ins_recipe[mutation_name] = mutation_quantity
 
-
     new_recipe = Recipe(name=name, base_ingredients=base_ingredients_recipe, add_ins=add_ins_recipe)
+
+    #if(decide_mutation()):
+    #    new_recipe.add_ins
 
     # TODO::: CALL MUTATION FUNCTIONS with random probability
 
@@ -171,23 +173,12 @@ def mutation(add_in_list):
     rand_index = random.randint(0, len(dict_keys) - 1)
     rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
     #add_in_list[rand_key] = ingredient_pairings[rand_key]
-    print(add_in_list)
-    print("_________________________________________________")
-    print(ingredient_pairings)
-    print(rand_key)
+    #print(add_in_list)
+   # print("_________________________________________________")
+   # print(ingredient_pairings)
+    #print(rand_key)
     return rand_key, ingredient_pairings[rand_key]
     #return add_in_listc
-
-"""
-
-"""
-def decide_mutation():
-     # determine whether a mutation should occur by some probability (40% likely to mutate)
-        mutate = random.randint(0,100)
-        if mutate < 40:
-            return True
-        return False
-
 
     
 
