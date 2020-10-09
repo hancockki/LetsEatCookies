@@ -1,4 +1,3 @@
-import selenium
 import numpy
 import random
 import re
@@ -10,7 +9,9 @@ from webcrawl import getCookieRecipes
 """
 Attributes:
     name --> str of the name
-    quantities --> dictionary where keys are strings of the name of the quantity and value is the ingredients
+    quantities --> dictionary where keys are the quantity and value is the number of times that quantity is seen across all recipes.
+    For instance, if self.name = "butter and self.quantities = {"1 cup": 5, "0.5 cup": 6}, this indicates that butter
+    is found in 11 recipes, 5 times with 1 cup and 6 times with 0.5 cup
 
 """
 class BaseIngredient(object):
@@ -62,9 +63,13 @@ class BaseIngredient(object):
 
 
 """
+Add in objects are a single add-in used in recipes
+
 Attributes:
     name --> str of the name
-    quantities --> dictionary where keys are strings of the name of the quantity and value is the ingredients
+    quantities --> dictionary where keys are the quantity and values are the number of times that quantity occurs across all recipes.
+    For instance, if self.name = "chocolate" and self.quantities= {"1 cup": 3, "2 cups": 2}, this indicates that chocolate
+    is found in 5 recipes, 3 times with 1 cup and twice with 2 cups
 
 """
 class AddIns(object):
@@ -112,8 +117,15 @@ class AddIns(object):
             self.quantities.setdefault(quantity, 1)
 
 """
+The recipe class creates recipe Objects, which we add to our list of recipes as we create them in generate_cookies.py
 
-
+Attributes:
+    name --> name of the recipe, str
+    base_ingredients --> dictionary mapping name of base ingredient to quantity
+    add_ins --> dictionary mapping add in to quantity
+    best_fit --> dictionary used for flavor pairing. IF the ingredient does not exist in the flavor pairing database, use an 
+    ingredient that is similar to it
+    fitness --> fitness of the recipe, based off of flavor similarities across add-ins
 """
 class Recipe(object):
     def __init__(self, name, base_ingredients, add_ins):
@@ -123,7 +135,8 @@ class Recipe(object):
         self.best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
                 "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-                    "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate", "chopped Oreos":"chocolate", "heath bars":"hazelnut"}
+                "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate", "chopped Oreos":"chocolate", \
+                "heath bars":"hazelnut", "graham cracker crumbs":"cocoa"}
         self.fitness = 0
 
     """

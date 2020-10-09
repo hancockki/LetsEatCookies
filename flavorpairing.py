@@ -39,7 +39,7 @@ def pairing(ingr, threshold, cat=None):
                 pairings[i] = similarity(ingr, i)
     #for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
     #reverse=True):
-    #    print(key, value)
+     #   print(key, value)
     return pairings
 
 
@@ -58,9 +58,9 @@ def main():
 pairings: * * *")
     request_pairing("orange", 0.1, "herb")
     request_pairing("chocolate", 0.1, "spice")
-    request_pairing("green tea", 0.6, "fruit")
+    request_pairing("oats", 0.5)
     request_pairing("coffee", 0.45)
-    request_pairing("chocolate", 0.3)
+    request_pairing("peanut butter", 0.3)
 
 
 if __name__ == "__main__":

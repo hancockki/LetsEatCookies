@@ -1,4 +1,3 @@
-import selenium
 import numpy
 import random
 import re
@@ -42,8 +41,9 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     choices = random.choices(recipe_objects, weights, k=2)
     add_ins_recipe_1 = choices[0].add_ins
     add_ins_recipe_2 = choices[1].add_ins
+    best_fit = choices[0].best_fit
 
-    add_ins_new_recipe = getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins)
+    add_ins_new_recipe = getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins, best_fit)
 
     # pick a name for our new recipe
     name = getName(add_ins_new_recipe)
@@ -69,15 +69,10 @@ Then, a random number between 0 and the number of add-ins total is chosen, and t
     add_ins_new_recipe --> add ins for our new recipe
 
 """
-def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins):
+def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins, best_fit):
     #this is the list of all possible pairs of add-ins from our best two recipes
     #product is a method that returns all the pairs
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
-
-    best_fit = {"M&Ms": "chocolate", "pumpkin puree": "pumpkin", "molasses": "honey", "white chocolate morsels": "chocolate", "dried cranberries": "cranberry", \
-            "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
-            "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
-            "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate"}
     
     #initialize ingredient pairs list and similarities list. Used later in the code to pick our add ins
     ingredient_pairs = []
@@ -143,7 +138,7 @@ In this method, we are building our inspiring set
 @returns:
 
 """
-def getInspiringSet(recipes):
+def getInspiringSet(recipes, print_info=False):
     recipe_objects = []
 
     #need to extract the quantities dictionary for each 
@@ -247,19 +242,19 @@ def getInspiringSet(recipes):
                         next_recipe.add_ins[name]=quantity
         recipe_objects.append(next_recipe)
 
-    
-    for value in base_ingredients.values():
-        print("Base Ingredient:", value.name)
-        print("Quantities:", value.quantities)
+    if print_info:
+        for value in base_ingredients.values():
+            print("Base Ingredient:", value.name)
+            print("Quantities:", value.quantities)
 
-    for value in add_ins.values():
-        print("Add in:", value.name)
-        print("Quantities: ", value.quantities)
+        for value in add_ins.values():
+            print("Add in:", value.name)
+            print("Quantities: ", value.quantities)
 
-    for recipe in recipe_objects:
-        print(recipe.name)
-        print(recipe.base_ingredients)
-        print(recipe.add_ins)
+        for recipe in recipe_objects:
+            print(recipe.name)
+            print(recipe.base_ingredients)
+            print(recipe.add_ins)
     
 
     return base_ingredients, add_ins, recipe_objects
@@ -425,51 +420,7 @@ def main():
         print("\n", i.name)
         print(i.fitness)
     print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
-    
 
-
-"""
-
-Prints out the recipe instructions to be called in main. Mostly hard-coded, but specifically includes the 
-recipe add-ins, the correct quantity of eggs, and a narrowly-randomized bake-time.
-
-@params:
-    new_recipe --> the current recipe for which we want to print the instructions
-
-def printInstructions(new_recipe):
-    print("1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.\n")
-    print("2. Whisk the dry ingredients together in a large bowl.\n")
-    for base in new_recipe.base_ingredients.keys():
-        if base == "egg":
-            egg_quantity = int(new_recipe.base_ingredients[base])
-
-    if egg_quantity > 1:
-        egg_string = str(egg_quantity) + " eggs "
-    else:
-        egg_string = "1 egg "
-
-    print("3. In a separate bowl, cream the butter and both sugars together until smooth. Add " + egg_string + "and the rest of the wet ingredients.\n")
-    print("4. Add your wet ingredients to the dry ingredients until combined.\n")
-
-    add_ins_string = "" # string that will store the different add ins, formatted nicely
-    for add_in in new_recipe.add_ins.keys():
-        #print(add_in)
-        add_ins_string += add_in + ", "
-        last_add_in = add_in
-        last_add_in_string = add_in + ", "
-    
-    add_ins_s = add_ins_string[:len(add_ins_string)-len(last_add_in_string)]
-    add_ins_s += "and " + last_add_in
-
-    print("5. Add the " + add_ins_s + " and mix until all combined, and a dough forms.\n")
-    print("6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.\n")
-        
-    min_time = random.randint(7,10)
-    max_time = random.randint(10, 15)
-
-    print("7. Bake for " + str(min_time) + "-" + str(max_time) + " minutes or until edges appear set.\n")
-    print("8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.\n")
-    print("9. Enjoy!\n")"""
 
 """
 Driver for the entire program
