@@ -418,7 +418,7 @@ def main():
     new_recipes_sorted = sorted(new_recipe_objects, key=attrgetter("fitness"),reverse=True)
     for i in new_recipes_sorted:
         print("\n", i.name)
-        print(i.fitness)
+        print("Fitness of the recipe:", i.fitness)
     print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
 
 
