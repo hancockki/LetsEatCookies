@@ -111,7 +111,10 @@ class AddIns(object):
         else:
             self.quantities.setdefault(quantity, 1)
 
+"""
 
+
+"""
 class Recipe(object):
     def __init__(self, name, base_ingredients, add_ins):
         self.name = name
@@ -153,7 +156,7 @@ class Recipe(object):
                     ingredient2 = combination[1]
                 total += fp.similarity(ingredient1, ingredient2) # compute similarity and add similarity to total 
             except KeyError: # we didn't find the ingredient in our database
-                print("Whoops! key error: ", ingredient1, " or " , ingredient2, " was not found in database")
+                #print("Whoops! key error: ", ingredient1, " or " , ingredient2, " was not found in database")
                 total_num -= 1 #subtract 1 from total num conmbinations
         if total_num > 0: #if we found some similarities
             total = (total / total_num) * 100
@@ -171,11 +174,11 @@ class Recipe(object):
     @returns:
         returns a single AddIn object
     """
-    def mutation(self, add_in_list):
+    def addIngredient(self):
         # initialize dictionary that stores pairings
         ingredient_pairings = {} 
-        for add_in in add_in_list.keys(): #for each add in in the new recipe
-            add_in_amount = add_in_list[add_in] # this is an add-in object
+        for add_in in self.add_ins.keys(): #for each add in in the new recipe
+            add_in_amount = self.add_ins[add_in] # this is an add-in object
             try: # try to find similarity
                 ingredient = add_in 
                 if add_in in self.best_fit: #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
@@ -184,12 +187,13 @@ class Recipe(object):
                 for key in pairs.keys(): #Add each ingredient from the pairings to ingredient_pairings dictionary. 
                     ingredient_pairings[key] = add_in_amount #The quantity of pairings remains the same as the AddIn it was paired from
             except KeyError: # we didn't find the ingredient in our database
-                print("Whoops! key error: ", ingredient, " was not found in database")
+                pass
+                #print("Whoops! key error: ", ingredient, " was not found in database")
         dict_keys = list(ingredient_pairings.keys()) 
         if len(dict_keys) > 1:
             rand_index = random.randint(0, len(dict_keys) - 1)
             rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
-            self.add_ins[rand_key] = ingredient_pairings[rand_key].getQuantity() # update the add_ins for this recipe and corresponding quantity
+            self.add_ins[rand_key] = ingredient_pairings[rand_key] # update the add_ins for this recipe and corresponding quantity
             return rand_key #return the new ingredient to be added 
         else:
             return None
@@ -204,24 +208,25 @@ class Recipe(object):
         the new add_in, as an object
 
     """
-    def replaceIngredient(self, add_ins):
+    def replaceIngredient(self):
         rand_int = random.randint(0, len(self.add_ins) - 1) # index to delete
         rand_int2 = random.randint(0, len(self.add_ins)-1) #index of what to pair new flavor with
         try: # try calling pairing function
-            if list(self.add_ins.keys())[rand_int2] in self.best_fit.keys(): # if its in best fit dictionary
+            amount = self.add_ins[list(self.add_ins.keys())[rand_int2]]
+            if self.add_ins.keys()[rand_int2] in self.best_fit.keys(): # if its in best fit dictionary
                 ingredient = self.best_fit[list(self.add_ins.keys())[rand_int2]] # set ingredient to best fit
             else:
                 ingredient = list(self.add_ins.keys())[rand_int2] # else set ingredient accordingly
             new_ingredients = fp.pairing(ingredient, 0.4)
         except KeyError:
-            print("couldnt pair ingredient")
+            #print("couldnt pair ingredient")
             return
         if len(new_ingredients) > 1: # if we found an ingredient, add it to recipe
             rand_item = random.randint(0, len(new_ingredients)-1)
-            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {"0.5 cup":1}) # Need to determine what quantity to put
+            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {amount:1}) # Need to determine what quantity to put
             key_to_replace = list(self.add_ins.keys())[rand_int]
             del self.add_ins[key_to_replace]
-            self.add_ins[new_ingredient.name] = new_ingredient.getQuantity()
+            self.add_ins[new_ingredient.name] = amount
         else:
             return
         return new_ingredient

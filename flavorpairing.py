@@ -37,9 +37,9 @@ def pairing(ingr, threshold, cat=None):
                         pairings[i] = similarity(ingr, i)
             else:
                 pairings[i] = similarity(ingr, i)
-    for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
-    reverse=True):
-        print(key, value)
+    #for key, value in sorted(pairings.items(), key=lambda kv: (kv[1],kv[0]), \
+    #reverse=True):
+    #    print(key, value)
     return pairings
 
 

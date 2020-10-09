@@ -108,7 +108,7 @@ def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins):
                 already_checked.append((ingredient1, ingredient2))
                 already_checked.append((ingredient2, ingredient1))
             except KeyError:
-                print("whoops! key error: ", ingredient1, " and ", ingredient2, " were not able to be compared")
+                #print("whoops! key error: ", ingredient1, " and ", ingredient2, " were not able to be compared")
                 ingredient_pairs.append(combination)
                 similarities.append(0.2) # set to low probability
                 continue
@@ -209,7 +209,7 @@ def getInspiringSet(recipes):
                 # if we got a match
                 if quantity is not None:
                     #quantity = q.group()
-                    # edge cases
+                    # edge cases -->when the webcrawl doesn't work perfectly
                     if 'almonds' in name:
                         name = 'almond'
                     if 'vanilla extract' in name:
@@ -218,10 +218,6 @@ def getInspiringSet(recipes):
                         name = 'cinnamon'
                     if 'allspice' in name:
                         name = "allspice"
-                    if 'cornstarch' in quantity:
-                        quantity = quantity.replace('cornstarch', 'teaspoon')
-                        if "teaspoon" not in quantity:
-                            quantity += " teaspoon"
                     if 'cream cheese' in name:
                         if len(quantity) < 3:
                             quantity += " cup"
@@ -238,6 +234,8 @@ def getInspiringSet(recipes):
                     if "cinnamon" in name or "cornstarch" in name:
                         if len(quantity) < 3:
                             quantity += " teaspoon"
+                    if "optional:" in name:
+                        continue
                     # if we already have this add-in
                     if name in add_ins.keys():
                         add_ins[name].updateQuantity(quantity)
@@ -295,13 +293,18 @@ def writeToFile(recipe):
         new_recipe.write("3. In a separate bowl, cream the butter and both sugars together until smooth. Add " + egg_string + "and the rest of the wet ingredients.\n")
         new_recipe.write("4. Add your wet ingredients to the dry ingredients until combined.\n")
         add_ins_string = "" # string that will store the different add ins, formatted nicely
+        last_add_in_string = ""
+        last_add_in = ""
         for add_in in recipe.add_ins.keys():
             add_ins_string += add_in + ", "
             last_add_in = add_in
             last_add_in_string = add_in + ", "
         add_ins_s = add_ins_string[:len(add_ins_string)-len(last_add_in_string)]
-        add_ins_s += "and " + last_add_in
-        new_recipe.write("5. Add the " + add_ins_s + " and mix until all combined, and a dough forms.\n")
+        if last_add_in != "":
+            add_ins_s += "and " + last_add_in
+            new_recipe.write("5. Add the " + add_ins_s + " and mix until all combined, and a dough forms.\n")
+        else:
+            new_recipe.write("5. Make sure you mix until a dough forms.\n")
         new_recipe.write("6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.\n")
         min_time = random.randint(7,10)
         max_time = random.randint(10, 15)
@@ -312,29 +315,61 @@ def writeToFile(recipe):
 
 """
 Creates a name for the recipe by including two different add-in ingredients to the name.
+
+@params:
+    add-ins --> add ins for the new recipe
+
+@returns:
+    name --> the name for our new recipe!
 """
-def getName(add_ins):    
-    if len(add_ins) > 0:
-        int1 = random.randint(0, len(add_ins) - 1)
-        int2 = random.randint(0, len(add_ins) - 1)
-        if int1 == int2:
-            int2 = random.randint(0, int1)
-        
-        name1 = ""
-        name2 = ""
-        # to make sure we aren't adding the same add in ingredient to the name
-        while name1 == name2:
+def getName(add_ins): 
+    # if we have more than 1 add in ingredients to add
+    if len(add_ins) > 1:
+        int1 = 0
+        int2 = 0
+        # try to find unique add-ins
+        while int1 == int2: # we want unique indeces for add-ins, so loop until we have different numbers
+            int1 = random.randint(0, len(add_ins) - 1)
+            int2 = random.randint(0, len(add_ins) - 1)
+            if int1 == int2: # if random picked the same, try again!
+                int2 = random.randint(0, max(int1,int2))
             name1 = list(add_ins.keys())[int1] #grab name attribute of the index of the addin from our master list
             name2 = list(add_ins.keys())[int2]
+            # we dont want these to be part of the name....gross......
+            if name1 == 'cornstarch' or name1 == 'cream of tartar':
+                int1 = int2
+            if name2 == 'cornstarch' or name2 == 'cream of tartar':
+                int2 = int1
 
         name = name1.title() + " " + name2.title() + " Cookies"
+    # 0 or 1 add-ins
     else:
         adjectives = ["Delicious", "Yummy", "Special", "World's Best", "Wonderful", "Mouth-Watering"]
-        adj = adjectives[random.randint(0,len(adjectives))]
-        name = adj + " Cookies"
+        adj = adjectives[random.randint(0,len(adjectives)-1)]
+        if len(add_ins) == 1: # if we have a single add-in
+            name = adj + list(add_ins.keys())[0] + " Cookies"
+        else:
+            name = adj + " Cookies"
 
     return name
 
+"""
+Decide what mutation to make
+@params:
+    new_recipe --> the recipe object we are mutating
+
+@returns:
+    new_ingredient --> the new ingredient we added/replaced
+
+"""
+def pickMutation(new_recipe):
+    random_num = random.randint(0,100)
+    new_ingredient = None
+    if random_num < 80:
+        new_ingredient = new_recipe.addIngredient()
+    elif random_num < 60:
+        new_ingredient = new_recipe.replaceIngredient()
+    return new_ingredient
 
 """
 Main method, used to run the program. First, checks to see if our hard-coded json data for the webcrawl exists (since we don't want to
@@ -362,37 +397,35 @@ def main():
 
     # generate our inspiring set
     base_ingredients, add_ins, recipe_objects = getInspiringSet(recipes)
-
+    new_recipe_objects = []
     # loop through recipe objects and write to file
     for recipe in recipe_objects:
         writeToFile(recipe)
         recipe.fitnessFunction()
 
     # loop to generate cookies
-    for i in range(10):
+    for i in range(15):
         new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
         #print(new_recipe.add_ins, new_recipe.base_ingredients)
         new_recipe.fitnessFunction()
         recipe_objects.append(new_recipe)
-
-        add_in = new_recipe.mutation(add_ins)
-        if add_in is not None:
-            #print("ADDED========", add_in)
-            if add_in not in add_ins.keys(): # if we havent already created a add in object for this
-                new_add_in = AddIns(name=add_in, quantities={})  #create new add_in object for this 
-                new_add_in.updateQuantity(new_recipe.add_ins[add_in])
-                add_ins[add_in] = new_add_in
+        new_recipe_objects.append(new_recipe)
+        new_ingredient = pickMutation(new_recipe)
+        if new_ingredient is not None:
+            if new_ingredient not in add_ins.keys(): # if we havent already created a add in object for this
+                new_add_in = AddIns(name=new_ingredient, quantities={})  #create new add_in object for this 
+                new_add_in.updateQuantity(new_recipe.add_ins[new_ingredient])
+                add_ins[new_ingredient] = new_add_in
             else:
-                add_ins[add_in].updateQuantity(new_recipe.add_ins[add_in])
-
-        print("\nNew recipe called: ", new_recipe.name)
+                add_ins[new_ingredient].updateQuantity(new_recipe.add_ins[new_ingredient])
         writeToFile(new_recipe)
 
-        #for ingredient in new_recipe.add_ins:
-            #print("new recipe add in", ingredient)
-
-
-        #printInstructions(new_recipe)
+    new_recipes_sorted = sorted(new_recipe_objects, key=attrgetter("fitness"),reverse=True)
+    for i in new_recipes_sorted:
+        print("\n", i.name)
+        print(i.fitness)
+    print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
+    
 
 
 """
