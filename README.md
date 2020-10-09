@@ -1,5 +1,5 @@
 # LetsEatCookies
-The purpose of this program is to use 
+The purpose of this program is to use cookie recipes from the internet to generate new recipes with creative ingredients! We are using recipes from Sally's Baking as the recipes on this site are really fun and lots of them have unique add-ins that we can use!
 
 ## cookie_classes.py
 Class Overview:
