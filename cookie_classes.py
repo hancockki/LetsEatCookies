@@ -136,7 +136,7 @@ class Recipe(object):
             "almond extract": "almond", "semi-sweet chocolate": "chocolate", "pistachios":"pistachio", "chocolate chips": "chocolate", "Biscoff spread": "cinnamon", \
                 "pumpkin pie spice": "allspice", "bittersweet chocolate":"chocolate", "raisins":"raisin", "pure maple syrup":"honey", "semi-sweet chocolate chips":"chocolate", \
                 "white chocolate chips":"chocolate", "ground ginger":"ginger","ground cardamom":"cardamom", "Oreos":"chocolate", "chopped Oreos":"chocolate", \
-                "heath bars":"hazelnut", "graham cracker crumbs":"cocoa"}
+                "heath bars":"hazelnut", "graham cracker crumbs":"cocoa", 'almonds':'almond', "pure vanilla extract":'vanilla', "ground cinnamon":'cinnamon', "ground allspice":"allspice"}
         self.fitness = 0
 
     """

@@ -138,7 +138,7 @@ In this method, we are building our inspiring set
 @returns:
 
 """
-def getInspiringSet(recipes, print_info=False):
+def getInspiringSet(recipes):
     recipe_objects = []
 
     #need to extract the quantities dictionary for each 
@@ -160,104 +160,104 @@ def getInspiringSet(recipes, print_info=False):
         #initialize next Recipe object
         next_recipe = Recipe(recipe, base_ingredients={}, add_ins={})
         for ingredient in recipes[recipe]: #loop through ingredients of this recipe
-            done = False # use this boolean to break the loop once we have matched from base ingredients
+            gotBase = False
             for i in base_ingredients.keys():
                 #if i in ingredient[0]:
                 #print(SequenceMatcher(None, i, ingredient[0]).ratio())
                 if SequenceMatcher(None, i, ingredient[0]).ratio() > 0.8 or i in ingredient[0]:
-                    done = True
-                    # match the ingredient quantity
-                    #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
-                    quantity = ingredient[1].strip(' ')
-                    if quantity is not None: #if we got a match
-                        #quantity = q.group()
-                        # edge cases
-                        if 'flour' in i:
-                            if 'cup' not in quantity:
-                                quantity += " cup"
-                        if 'brown' in i:
-                            if 'cup' not in quantity:
-                                quantity += " cup"
-
-                        if 'egg' in quantity:
-                            quantity = quantity.replace('egg','')
-                        if 'all' in quantity:
-                            quantity = quantity.replace('all', 'cup')
-                        if 'salt' in i:
-                            if 'cup' in quantity:
-                                quantity = quantity.replace('cup', 'teaspoon')
-                        # update ingredeint quantity
-                        base_ingredients[i].updateQuantity(quantity)
-                        next_recipe.base_ingredients[i]=quantity
+                    gotBase = updateBaseIngredDataSet(ingredient, next_recipe, base_ingredients, i)
             # this means it is an add-in
-            if not done:
+            if not gotBase:
                 #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]*(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
-                quantity = ingredient[1].strip(' ')
-                # edge cases
-                if 'cornstarch' in ingredient[1]:
-                    name = 'cornstarch'
-                if 'cream cheese' in ingredient[0]:
-                    name = "cream cheese"
-                else:
-                    name = ingredient[0].replace('*','').replace(',','')
-
-                # if we got a match
-                if quantity is not None:
-                    #quantity = q.group()
-                    # edge cases -->when the webcrawl doesn't work perfectly
-                    if 'almonds' in name:
-                        name = 'almond'
-                    if 'vanilla extract' in name:
-                        name = "vanilla"
-                    if 'cinnamon' in name:
-                        name = 'cinnamon'
-                    if 'allspice' in name:
-                        name = "allspice"
-                    if 'cream cheese' in name:
-                        if len(quantity) < 3:
-                            quantity += " cup"
-                    if "semi-sweet" in name:
-                        name = "chocolate chips"
-                        if len(quantity) < 3:
-                            quantity += " cup"
-                    if "chocolate chips" in name:
-                        if len(quantity) < 3:
-                            quantity += " cup"
-                    if "M&M" in name:
-                        if len(quantity) < 3:
-                            quantity += " cup"
-                    if "cinnamon" in name or "cornstarch" in name:
-                        if len(quantity) < 3:
-                            quantity += " teaspoon"
-                    if "optional:" in name:
-                        continue
-                    # if we already have this add-in
-                    if name in add_ins.keys():
-                        add_ins[name].updateQuantity(quantity)
-                        next_recipe.add_ins[name]=quantity
-                    else: # create new add-in object
-                        new_add_in = AddIns(name=name, quantities={})
-                        new_add_in.updateQuantity(quantity)
-                        add_ins[name] = new_add_in
-                        next_recipe.add_ins[name]=quantity
+                updateAddInDataSet(next_recipe, add_ins, ingredient)
         recipe_objects.append(next_recipe)
 
-    if print_info:
-        for value in base_ingredients.values():
-            print("Base Ingredient:", value.name)
-            print("Quantities:", value.quantities)
-
-        for value in add_ins.values():
-            print("Add in:", value.name)
-            print("Quantities: ", value.quantities)
-
-        for recipe in recipe_objects:
-            print(recipe.name)
-            print(recipe.base_ingredients)
-            print(recipe.add_ins)
-    
-
     return base_ingredients, add_ins, recipe_objects
+
+"""
+Here, we are updating our add ins dictionary. We call this method when we come across an add-in in a recipe. This method
+is called if we loop through all the base ingredients in the base_ingredients dictionary and none matched the ingredient
+we are on. We check a few edge cases (happens when the webcrawl isn't perfect) and then update
+the quantity in the dictionary accordingly. If the ingredient isn't yet in the dicionary (we haven't come across it in any 
+recipe yet), then we create a new key for it. For example, if we come across 'oreos' in our recipe for the first time, we call this
+method. Then, it calls updateQuantity, which is a method of the AddIn class. If our dictionary currently
+has the following -- {"chocolate chips":{"1 cup":2}} -- the method will add a new key reflecting that we have now seen 
+oreos and it will become {"chocolate chips":{"1 cup":2}, "oreos", {"18":1}} (the choice of 18 oreos is of course arbitrary!)
+
+@params:
+    ingredient --> the current ingredient we are on in the recipe
+    next_recipe --> the recipe we are looping through
+    ingredient --> the add in ingredient we are updating
+"""
+def updateAddInDataSet(next_recipe, add_ins, ingredient):
+    quantity = ingredient[1].strip(' ')
+    # edge cases
+    if 'cornstarch' in ingredient[1]:
+        name = 'cornstarch'
+    if 'cream cheese' in ingredient[0]:
+        name = "cream cheese"
+    else:
+        name = ingredient[0].replace('*','').replace(',','')
+
+    # if we got a match
+    if quantity is not None:
+        #quantity = q.group()
+        # edge cases -->when the webcrawl doesn't work perfectly
+        if "semi-sweet" in name:
+            name = "chocolate chips"
+        if "M&M" in name or "chocolate chips" in name or "cream cheese" in name:
+            if len(quantity) < 3:
+                quantity += " cup"
+        elif "cinnamon" in name or "cornstarch" in name:
+            if len(quantity) < 3:
+                quantity += " teaspoon"
+        if "optional:" in name:
+            return
+        # if we already have this add-in
+        if name in add_ins.keys():
+            add_ins[name].updateQuantity(quantity)
+            next_recipe.add_ins[name]=quantity
+        else: # create new add-in object
+            new_add_in = AddIns(name=name, quantities={})
+            new_add_in.updateQuantity(quantity)
+            add_ins[name] = new_add_in
+            next_recipe.add_ins[name]=quantity
+
+"""
+Here, we are updating our base ingredient dictionary. We call this method when we come across a base
+ingredient in a recipe. We check a few edge cases (happens when the webcrawl isn't perfect) and then update
+the quantity in the dictionary accordingly. For example, if we come across '2 eggs' in our recipe, we call this
+method. Then, it calls updateQuantity, which is a method of the BaseIngredient class. If our dictionary currently
+has the following for egg -- {"egg":{1:2}} -- the method will add a new key reflecting that we have now seen 
+a quantity of two eggs and it will become {"egg":{1:2, 2:1}}
+
+@params:
+    ingredient --> the current ingredient we are on in the recipe
+    next_recipe --> the recipe we are looping through
+    base_ingredients --> our overall base ingredient dictionary
+    i --> the base ingredient we are updating
+"""
+def updateBaseIngredDataSet(ingredient, next_recipe, base_ingredients, i):
+    # match the ingredient quantity
+    #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
+    quantity = ingredient[1].strip(' ')
+    if quantity is not None: #if we got a match
+        #quantity = q.group()
+        # edge cases
+        if 'flour' in i or 'brown' in i:
+            if 'cup' not in quantity:
+                quantity += " cup"
+        if 'egg' in quantity:
+            quantity = quantity.replace('egg','')
+        if 'all' in quantity:
+            quantity = quantity.replace('all', 'cup')
+        if 'salt' in i:
+            if 'cup' in quantity:
+                quantity = quantity.replace('cup', 'teaspoon')
+            # update ingredeint quantity
+        base_ingredients[i].updateQuantity(quantity)
+        next_recipe.base_ingredients[i]=quantity
+        return True
 
 """
 Write recipe to a file
@@ -367,6 +367,37 @@ def pickMutation(new_recipe):
     return new_ingredient
 
 """
+This method prints all the info related to our overall data sets. Can be called before or after generating
+new recipes. With each new recipe, we add it to the recipe_objects list. We also update the base ingredients
+dictionary with the new recipe's base ingredients quantities and the add in dictionary with the add in quantities.
+
+@params:
+    base_ingredients --> dictionary mapping the string of the base ingredient to a dictionary mapping the quantity of 
+    that ingredient to the # of times it occurs
+    add_ins --> dictionary mapping the string of the add in to a dictionary mapping the quantity of 
+    that ingredient to the # of times it occurs
+    recipe_objects --> list of recipe objects, with base ingredients and add ins as attributes
+"""
+def printInfo(base_ingredients, add_ins, recipe_objects):
+    #print base ingredients and their quantities one at a time
+    for value in base_ingredients.values():
+        print("Base Ingredient:", value.name)
+        print("Quantities:", value.quantities,"\n")
+    #print add ins and their quantities one at a time
+    for value in add_ins.values():
+        print("Add in:", value.name)
+        print("Quantities: ", value.quantities, "\n")
+    #print ingredients from each recipe object
+    for recipe in recipe_objects:
+        print(recipe.name)
+        for ingredient, quantity in recipe.base_ingredients.items():
+            print(quantity, ingredient)
+        for ingredient, quantity in recipe.add_ins.items():
+            print(quantity, ingredient)
+        print("\n")
+    
+
+"""
 Main method, used to run the program. First, checks to see if our hard-coded json data for the webcrawl exists (since we don't want to
 run the webcrawl more than needed as it's slow). If it exists, load the json file into the dictionary format we want.
 
@@ -392,6 +423,7 @@ def main():
 
     # generate our inspiring set
     base_ingredients, add_ins, recipe_objects = getInspiringSet(recipes)
+    printInfo(base_ingredients, add_ins, recipe_objects)
     new_recipe_objects = []
     # loop through recipe objects and write to file
     for recipe in recipe_objects:
