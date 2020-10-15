@@ -2,10 +2,8 @@
 The purpose of this program is to use cookie recipes from the internet to generate new recipes with creative ingredients! We are using recipes from Sally's Baking as the recipes on this site are really fun and lots of them have unique add-ins that we can use!
 
 ## cookie_classes.py
-Class Overview:
 
-
-### BaseIngredient
+### BaseIngredient Class
 BaseIngredient objects have the following attributes:
 - **name**, which is a string representing the name of the ingredient
 - **quantities**, which is a dictionary where keys are the quantity and value is the number of times that quantity is seen across all recipes.
@@ -16,7 +14,7 @@ The BaseIngredient class has the following functions:
 - **getQuantity**, where the quantities attribute can be retreived
 - **updateQuantity**, where the quantities attribute can be re-assigned
 
-### AddIns
+### AddIns Class
 AddIn objects have the following attributes:
 - **name**, which is a string representing the name of the ingredient
 - **quantities**, which is a dictionary where keys are the quantity and values are the number of times that quantity occurs across all recipes.
@@ -28,7 +26,7 @@ The AddIns class has the following functions:
 - **getQuantity**, where the quantities attribute can be retreived
 - **updateQuantity**, where the quantities attribute can be re-assigned
 
-### Recipe
+### Recipe Class
 Recipe objects have the following attributes:
 - **name**, which is a string representing the name of the recipe
 - **base_ingredients**, which is a dictionary mapping the base ingredient to the quantity. For instance, {"butter":"0.5 cup", "all purpose flour":"2 cups"} could be the attribute. The quantity is determined probabilistically based on the overall list of BaseIngredient objects, such that the more times a certain quantity is seen across all recipes, the more likely it is we pick that quantity.
@@ -65,9 +63,9 @@ python3 generate_cookies.py
 ```
 
 ## Discussion
-**Metric One:** From Ventura's odyssey we explored the step of Generalization
+**Metric One:** From Ventura's odyssey we explored the step of Generalization. Through the process of web scraping we built an inspiring set that models the recipes from Sally's Baking Addiction and places bias on the ingredient quantities (ones that appear more have a higher probability during the selection process). This is approaching generalization, but still closely resemples memorization. Generalization is clearly seen during our recipe creation when selecting add ins. There is regulazation by selecting existing items in the recipe, particularly because their is bias towards ingredients pair well with each other, but  there is exploration through the indroduction of mutations. The mutations select items outside of the inspiring set, but with the bias of pairing well with items in the set. So there is exploration, but in a non-trivial way.
 
-**Metric Two:** From Ventura's odyssey 
+**Metric Two:** From Ventura's odyssey we also explored the step of Filtration, and ideas of self evalutaiton from our system. 
 
 **Results:**
 
