@@ -34,6 +34,11 @@ Recipe objects have the following attributes:
 - **base_ingredients**, which is a dictionary mapping the base ingredient to the quantity. For instance, {"butter":"0.5 cup", "all purpose flour":"2 cups"} could be the attribute. The quantity is determined probabilistically based on the overall list of BaseIngredient objects, such that the more times a certain quantity is seen across all recipes, the more likely it is we pick that quantity.
 - **add_ins**, which is a dictionary mapping the add in to the quantity. For instance, {"chocolate chips":"0.5 cup", "vanilla":"2 teaspoons"} could be the attribute. The quantity is determined probabilistically based on the overall list of AddIn objects, such that the more times a certain quantity is seen across all recipes, the more likely it is we pick that quantity.
 
+### Functions Outside of Classes
+- **fitnessFunction**, which returns the fitness of our recipe, based on the similarity between our ingredients. To calculate fitness, we first use combinations to get all the combinations of two add-ins. Then, we compute the similarity between them, if possible, and add it to the total fitness. If it's not possible, we subtract 1 from the total number of combinations and add 0 to total fitness. Then, we divide total fitness by the number of combinations we were able to calculate the similarity of. This becomes our fitness.
+- **addIngredient**, which returns a single AddIn object to be added to a new recipe that pairs within .55 of an existing addIn ingredient. The keys are new ingredient names from the .npy files, and the values are the quantities pulled from the AddIn ingredient it was paired from.
+- **replaceIngredient**, which returns an AddInn object to replace a random ingredient in a recipe with an ingredient that pairs well with another ingredient in the recipe.
+
 
 ## generate_cookies.py
 There are no classes within generate_cookies.py, but it contains the following functions:
@@ -58,3 +63,12 @@ python3 generate_cookies.py
 ```bash
 python3 generate_cookies.py
 ```
+
+## Discussion
+**Metric One:** From Ventura's odyssey we explored the step of Generalization
+
+**Metric Two:** From Ventura's odyssey 
+
+**Results:**
+
+"As a hint for success for your overall code submission, I would encourage you to describe your two metrics/perspectives in your README, along with a description of your results which indicated that your system produced better recipes with them (as opposed to without them!)."
