@@ -65,6 +65,11 @@ There are no classes within generate_cookies.py, but it contains the following f
 There are no classes within webcrawl.py, but it contains the following functions:
 - **getCookieRecipes**, which crawls through the website sally's baking addiction for cookie recipes used to populate our inspiring set. It is given a list of links to the desired resipies to walk through. It returns a dictionary where the keys are recipe names, and the values are dictionaries mapping each ingredient to its quantity. The list of recipes can be changed as the method for grabbing the ingredients is the same on any page on the website.
 
+## flavorpairing.py
+There are no classes within flacorpairing.py, but it contains the following functions:
+- **getCookieRecipes**,
+
+
 ## Running the program
 To run the program, first clone this github repository onto your local machine in a directory of your choice.
 
