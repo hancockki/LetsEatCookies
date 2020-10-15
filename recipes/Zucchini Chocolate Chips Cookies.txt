@@ -1,28 +1,32 @@
-S’more Chocolate Chip Cookies
+Zucchini Chocolate Chips Cookies
+2 cup all-purpose flour
+1 egg
+0.5 cup granulated sugar
+1 cup brown sugar
 0.75 cup butter
 0.5 teaspoon salt
-0.75 cup brown sugar
-0.25 cup granulated sugar
-1 egg
-2 cup all-purpose flour
-1 teaspoon baking soda
-2 teaspoon pure vanilla extract
-2 teaspoon cornstarch
-4 ounce chocolate chips
-12 marshmallows
-0.333333333333 cup graham cracker crumbs
+0.5 teaspoon baking soda
+0.5 teaspoon baking powder
+1 teaspoon cornstarch
+1 cup chocolate chips
+0.25 cup cocoa powder
+1 cup zucchini
+1 teaspoon ground cinnamon
+1 pure vanilla extract
+3 cup oats
+6 tablespoon pumpkin puree
+8 ounce chocolate
+0.75 teaspoon pumpkin pie spice
+1 tablespoon pure maple syrup
+3 cup carob
 
 Instructions:
 1. Preheat your oven to 350 degrees Fahrenheit and line baking sheets with parchment paper.
 2. Whisk the dry ingredients together in a large bowl.
 3. In a separate bowl, cream the butter and both sugars together until smooth. Add 1 egg and the rest of the wet ingredients.
 4. Add your wet ingredients to the dry ingredients until combined.
-5. Add the pure vanilla extract, cornstarch, chocolate chips, marshmallows, and graham cracker crumbs and mix until all combined, and a dough forms.
+5. Add the cornstarch, chocolate chips, cocoa powder, zucchini, ground cinnamon, pure vanilla extract, oats, pumpkin puree, chocolate, pumpkin pie spice, pure maple syrup, and carob and mix until all combined, and a dough forms.
 6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.
-<<<<<<< HEAD
-7. Bake for 9-11 minutes or until edges appear set.
-=======
 7. Bake for 10-14 minutes or until edges appear set.
->>>>>>> cc615fd7f4454c9d91bec20ee32f457d8e1392b3
 8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.
 9. Enjoy!

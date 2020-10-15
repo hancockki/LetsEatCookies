@@ -395,6 +395,40 @@ def printInfo(base_ingredients, add_ins, recipe_objects):
         for ingredient, quantity in recipe.add_ins.items():
             print(quantity, ingredient)
         print("\n")
+
+"""
+Generate the desired number of new recipes, and prints the best one based on our fitness function.
+
+@params:
+    num_recipes --> number of recipes we would like to generate
+    base_ingredients --> dictionary of base ingredients and their quantities
+    add_ins --> dictionary of add ins and their quantities
+    recioe_objects --> list of recipe objects
+"""
+def generateRecipes(num_recipes, base_ingredients, add_ins, recipe_objects):
+    new_recipe_objects = [] #store our new recipe objects
+    # loop to generate cookies
+    for i in range(num_recipes):
+        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
+        #print(new_recipe.add_ins, new_recipe.base_ingredients)
+        recipe_objects.append(new_recipe)
+        new_recipe_objects.append(new_recipe)
+        new_ingredient = pickMutation(new_recipe)
+        if new_ingredient is not None:
+            if new_ingredient not in add_ins.keys(): # if we havent already created a add in object for this
+                new_add_in = AddIns(name=new_ingredient, quantities={})  #create new add_in object for this 
+                new_add_in.updateQuantity(new_recipe.add_ins[new_ingredient])
+                add_ins[new_ingredient] = new_add_in
+            else:
+                add_ins[new_ingredient].updateQuantity(new_recipe.add_ins[new_ingredient])
+        new_recipe.fitnessFunction()
+        writeToFile(new_recipe)
+
+    new_recipes_sorted = sorted(new_recipe_objects, key=attrgetter("fitness"),reverse=True)
+    for i in new_recipes_sorted:
+        print("\n", i.name)
+        print("Fitness of the recipe:", round(i.fitness,2))
+    print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
     
 
 """
@@ -403,7 +437,7 @@ run the webcrawl more than needed as it's slow). If it exists, load the json fil
 
 Then, creates the inspiring set based on the json. The inspiring set method returns our base ingredients, add ins, and recipe objects.
 
-Finally, uses the inspiring set to generate new recipes, updating the add_ins dictionary as needed.
+Finally, calls generateRecipes.
 """
 def main():
     # check to see if our data set is already hard-coded
@@ -415,7 +449,7 @@ def main():
                 recipes = json.load(json_file)
     except:
         print("json file is empty or does not exist")
-        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/sweet-salty-potato-chip-toffee-cookies-2/','https://sallysbakingaddiction.com/smores-chocolate-chip-cookies/','https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/','https://sallysbakingaddiction.com/biscoff-chocolate-chip-cookies/', \
+        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/caramel-surprise-snickerdoodles/','https://sallysbakingaddiction.com/death-by-chocolate-peanut-butter-chip-cookies/','https://sallysbakingaddiction.com/sweet-salty-potato-chip-toffee-cookies-2/','https://sallysbakingaddiction.com/smores-chocolate-chip-cookies/','https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/','https://sallysbakingaddiction.com/biscoff-chocolate-chip-cookies/', \
             'https://sallysbakingaddiction.com/white-chocolate-cranberry-pistachio-cookies/','https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
         'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/bunny-sugar-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
             'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/', 'https://sallysbakingaddiction.com/oreo-cheesecake-cookies/', \
@@ -424,34 +458,13 @@ def main():
     # generate our inspiring set
     base_ingredients, add_ins, recipe_objects = getInspiringSet(recipes)
     printInfo(base_ingredients, add_ins, recipe_objects)
-    new_recipe_objects = []
     # loop through recipe objects and write to file
     for recipe in recipe_objects:
         writeToFile(recipe)
         recipe.fitnessFunction()
 
-    # loop to generate cookies
-    for i in range(15):
-        new_recipe = buildNewRecipe(base_ingredients, add_ins, recipe_objects)
-        #print(new_recipe.add_ins, new_recipe.base_ingredients)
-        new_recipe.fitnessFunction()
-        recipe_objects.append(new_recipe)
-        new_recipe_objects.append(new_recipe)
-        new_ingredient = pickMutation(new_recipe)
-        if new_ingredient is not None:
-            if new_ingredient not in add_ins.keys(): # if we havent already created a add in object for this
-                new_add_in = AddIns(name=new_ingredient, quantities={})  #create new add_in object for this 
-                new_add_in.updateQuantity(new_recipe.add_ins[new_ingredient])
-                add_ins[new_ingredient] = new_add_in
-            else:
-                add_ins[new_ingredient].updateQuantity(new_recipe.add_ins[new_ingredient])
-        writeToFile(new_recipe)
+    generateRecipes(15, base_ingredients, add_ins, recipe_objects)
 
-    new_recipes_sorted = sorted(new_recipe_objects, key=attrgetter("fitness"),reverse=True)
-    for i in new_recipes_sorted:
-        print("\n", i.name)
-        print("Fitness of the recipe:", i.fitness)
-    print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
 
 
 """

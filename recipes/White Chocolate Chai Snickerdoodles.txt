@@ -22,6 +22,10 @@ Instructions:
 4. Add your wet ingredients to the dry ingredients until combined.
 5. Add the cream of tartar, pure vanilla extract, white chocolate chips, ground cinnamon, ground ginger, ground cardamom, and ground allspice and mix until all combined, and a dough forms.
 6. Roll the cookie dough into medium-sized scoops and place 3 inches apart on the baking sheet.
+<<<<<<< HEAD
 7. Bake for 9-11 minutes or until edges appear set.
+=======
+7. Bake for 8-14 minutes or until edges appear set.
+>>>>>>> cc615fd7f4454c9d91bec20ee32f457d8e1392b3
 8. Remove from the oven and allow to cool on the baking sheet for 5 minutes then transfer to a wire rack to cool.
 9. Enjoy!
