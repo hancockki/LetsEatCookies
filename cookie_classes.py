@@ -19,43 +19,49 @@ import random
 import re
 import flavorpairing as fp
 from itertools import combinations
-from webcrawl import getCookieRecipes
-
+from webcrawl import get_cookie_recipes
 
 
 class BaseIngredient(object):
     """
-Attributes:
-    name --> str of the name
-    quantities --> dictionary where keys are the quantity and value is the number of times that quantity is seen across all recipes.
-    For instance, if self.name = "butter and self.quantities = {"1 cup": 5, "0.5 cup": 6}, this indicates that butter
-    is found in 11 recipes, 5 times with 1 cup and 6 times with 0.5 cup
+    Attributes:
+        name --> str of the name
+        quantities --> dictionary where keys are the quantity and value is the number of times that quantity is seen across all recipes.
+        For instance, if self.name = "butter and self.quantities = {"1 cup": 5, "0.5 cup": 6}, this indicates that butter
+        is found in 11 recipes, 5 times with 1 cup and 6 times with 0.5 cup
+    """
 
-"""
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
-    
-    
-    def getQuantity(self):
+
+    def __str__(self):
         """
-    Returns a quantity that should correspond with a certain ingredient.
-    Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
+        Returns a string representation of this BaseIngredient.
+        """
+        return self.name
+
+    def get_quantity(self):
+        """
+        Returns a quantity that should correspond with a certain ingredient.
+        Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
         
-    @params:
-        quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
-    @returns:
-        returns the quantity
-    """
+        @params:
+            quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
+        @returns:
+            returns the quantity
+        """
         new_quantity = 0
         for key in self.quantities.keys():
-            new_quantity = key # the quantity will be assigned to this variable
+            # the quantity will be assigned to this variable
+            new_quantity = key 
             break
 
         sum_quantity = 0 
         for q in self.quantities:
             sum_quantity += self.quantities[q]
-        num = random.randint(0,sum_quantity) # random integer between 0 and the total sum
+        # random integer between 0 and the total sum
+        num = random.randint(0,sum_quantity) 
 
         sum = 0 
         for q in self.quantities:
@@ -67,56 +73,58 @@ Attributes:
 
         return new_quantity
     
-   
-    def updateQuantity(self, quantity):
-         """
-    Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
+    def update_quantity(self, quantity):
+        """
+        Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
     
-    @params:
-        quantity --> the quantity whose value in the quantities dict we need to update
-    """
+        @params:
+            quantity --> the quantity whose value in the quantities dict we need to update
+        """
         if quantity in self.quantities:
             self.quantities[quantity]+=1
         else:
             self.quantities.setdefault(quantity, 1)
 
 
-
 class AddIns(object):
     """
-Add in objects are a single add-in used in recipes
+    Add in objects are a single add-in used in recipes
 
-Attributes:
-    name --> str of the name
-    quantities --> dictionary where keys are the quantity and values are the number of times that quantity occurs across all recipes.
-    For instance, if self.name = "chocolate" and self.quantities= {"1 cup": 3, "2 cups": 2}, this indicates that chocolate
-    is found in 5 recipes, 3 times with 1 cup and twice with 2 cups
-
-"""
+    Attributes:
+        name --> str of the name
+        quantities --> dictionary where keys are the quantity and values are the number of times that quantity occurs across all recipes.
+        For instance, if self.name = "chocolate" and self.quantities= {"1 cup": 3, "2 cups": 2}, this indicates that chocolate
+        is found in 5 recipes, 3 times with 1 cup and twice with 2 cups
+    """
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
 
-    
-    def getQuantity(self):
+    def __str__(self):
         """
-    Returns a quantity that should correspond with a certain ingredient.
-    Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
+        Returns a string representation of this AddIn.
+        """
+        return self.name
+
+    def get_quantity(self):
+        """
+        Returns a quantity that should correspond with a certain ingredient.
+        Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
         
-    @params:
-        quantities --> the dictionary holding certain quantities of an ingredient mapped to the number of times this quantity of the ingredient is present
-    @returns:
-        returns the quantity
-    """
+        @returns:
+            returns the quantity
+        """
         new_quantity = 0
         for key in self.quantities.keys():
-            new_quantity = key # the quantity will be assigned to this variable
+            # the quantity will be assigned to this variable
+            new_quantity = key 
             break
 
         sum_quantity = 0 
         for q in self.quantities:
             sum_quantity += self.quantities[q]
-        num = random.randint(0,sum_quantity) # random integer between 0 and the total sum
+        # random integer between 0 and the total sum
+        num = random.randint(0,sum_quantity) 
 
         sum = 0 
         for q in self.quantities:
@@ -128,11 +136,13 @@ Attributes:
 
         return new_quantity
 
-    
-    def updateQuantity(self, quantity):
+    def update_quantity(self, quantity):
         """
-    Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
-    """
+        Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
+        
+        @params:
+            quantity --> the quantity whose value in the quantities dict we need to update
+        """
         if quantity in self.quantities:
             self.quantities[quantity]+=1
         else:
@@ -141,16 +151,16 @@ Attributes:
 
 class Recipe(object):
     """
-The recipe class creates recipe Objects, which we add to our list of recipes as we create them in generate_cookies.py
+    The recipe class creates recipe Objects, which we add to our list of recipes as we create them in generate_cookies.py
 
-Attributes:
-    name --> name of the recipe, str
-    base_ingredients --> dictionary mapping name of base ingredient to quantity
-    add_ins --> dictionary mapping add in to quantity
-    best_fit --> dictionary used for flavor pairing. IF the ingredient does not exist in the flavor pairing database, use an 
-    ingredient that is similar to it
-    fitness --> fitness of the recipe, based off of flavor similarities across add-ins
-"""
+    Attributes:
+        name --> name of the recipe, str
+        base_ingredients --> dictionary mapping name of base ingredient to quantity
+        add_ins --> dictionary mapping add in to quantity
+        best_fit --> dictionary used for flavor pairing. IF the ingredient does not exist in the flavor pairing database, use an 
+            ingredient that is similar to it
+        fitness --> fitness of the recipe, based off of flavor similarities across add-ins
+    """
     def __init__(self, name, base_ingredients, add_ins):
         self.name = name
         self.base_ingredients = base_ingredients
@@ -162,107 +172,138 @@ Attributes:
                 "heath bars":"hazelnut", "graham cracker crumbs":"cocoa", 'almonds':'almond', "pure vanilla extract":'vanilla', "ground cinnamon":'cinnamon', "ground allspice":"allspice"}
         self.fitness = 0
 
-    
-    def fitnessFunction(self):
+    def __str__(self):
         """
-    Returns the fitness of our recipe, based on the similarity between our ingredients
+        Returns a string representation of this Recipe.
+        """
+        return self.name
 
-    We have the best_fit data structure to account for names of add ins that are unusual, and are not in the data base. In this case, we pair
-    the ingredient to something close to it. In some cases, the ingredient is weird (like cornstarch) and so we ignore those cases
+    def fitness_function(self):
+        """
+        Returns the fitness of our recipe, based on the similarity between our ingredients
 
-    To calculate fitness, we first use combinations to get all the combinations of two add-ins. Then, we compute the similarity between them, if possible,
-    and add it to the total fitness. If it's not possible, we subtract 1 from the total number of combinations and add 0 to total fitness.
-    Then, we divide total fitness by the number of combinations we were able to calculate the similarity of. This becomes our fitness.
+        We have the best_fit data structure to account for names of add ins that are unusual, and are not in the data base. In this case, we pair
+        the ingredient to something close to it. In some cases, the ingredient is weird (like cornstarch) and so we ignore those cases
 
-    @returns:
-        total --> the total fitness for the recipe
-    """
-        # dictionary mapping add in name to 'best fit' name 
-    
-        total = 0 # initialize total
-        total_num = len(list(combinations(self.add_ins, 2))) # total number of combinations of two add-ins
+        To calculate fitness, we first use combinations to get all the combinations of two add-ins. Then, we compute the similarity between them, if possible,
+        and add it to the total fitness. If it's not possible, we subtract 1 from the total number of combinations and add 0 to total fitness.
+        Then, we divide total fitness by the number of combinations we were able to calculate the similarity of. This becomes our fitness.
+
+        NOTE: If a recipe has no add-ins, the fitness is automatically 0 (since there's nothing to compare). This makes sense since a cookie with only our
+        base ingredients is boring!
+
+        @returns:
+            total --> the total fitness for the recipe
+        """
+        # initialize total
+        total = 0 
+        # total number of combinations of two add-ins
+        total_num = len(list(combinations(self.add_ins, 2))) 
         for combination in combinations(self.add_ins, 2):
-            try: # try to find similarity
-                if combination[0] in self.best_fit: # if it's in our best fit dictionary, take the value instead of the real name
+            # try to find similarity
+            try: 
+                # if it's in our best fit dictionary, take the value instead of the real name
+                if combination[0] in self.best_fit: 
                     ingredient1 = self.best_fit[combination[0]]
                 else:
                     ingredient1 = combination[0]
-                if combination[1] in self.best_fit: #if ingredient 2 is in our best fit dictionary
+                #if ingredient 2 is in our best fit dictionary
+                if combination[1] in self.best_fit: 
                     ingredient2 = self.best_fit[combination[1]]
                 else:
                     ingredient2 = combination[1]
-                total += fp.similarity(ingredient1, ingredient2) # compute similarity and add similarity to total 
-            except KeyError: # we didn't find the ingredient in our database
+                # compute similarity and add similarity to total 
+                total += fp.similarity(ingredient1, ingredient2) 
+            # we didn't find the ingredient in our database
+            except KeyError: 
                 #print("Whoops! key error: ", ingredient1, " or " , ingredient2, " was not found in database")
-                total_num -= 1 #subtract 1 from total num conmbinations
-        if total_num > 0: #if we found some similarities
+                #subtract 1 from total num combinations
+                total_num -= 1 
+        #if we found some similarities
+        if total_num > 0: 
             total = (total / total_num) * 100
         else:
             total = 0
         self.fitness = total
 
-    
-    def addIngredient(self):
+    def add_ingredient(self):
         """
-    Returns a single AddIn object to be added to a new recipe
-    Walks through all of the of the AddIn ingredients of a new recipe, and adds ingredients that pair within .5 of 
-    each AddIn ingredient to a dictonary called ingredient_pairings. They keys are new ingredient names from the .npy
-    files, and the values are the quantities pulled from the AddIn ingredient it was paired from.
-    @params:
-        add_in_list --> the dictionary holding names and quantities of AddIn objects of a new recipe
-    @returns:
-        returns a single AddIn object
-    """
+        Returns a single AddIn object to be added to a new recipe
+        Walks through all of the of the AddIn ingredients of a new recipe, and adds ingredients that pair within .5 of 
+        each AddIn ingredient to a dictonary called ingredient_pairings. They keys are new ingredient names from the .npy
+        files, and the values are the quantities pulled from the AddIn ingredient it was paired from.
+        
+        @params:
+            add_in_list --> the dictionary holding names and quantities of AddIn objects of a new recipe
+        @returns:
+            returns a single AddIn object
+        """
         # initialize dictionary that stores pairings
         ingredient_pairings = {} 
-        for add_in in self.add_ins.keys(): #for each add in in the new recipe
-            add_in_amount = self.add_ins[add_in] # this is an add-in object
-            try: # try to find similarity
+        #for each add in in the new recipe
+        for add_in in self.add_ins.keys(): 
+            # this is an add-in object
+            add_in_amount = self.add_ins[add_in] 
+            # try to find similarity
+            try: 
                 ingredient = add_in 
-                if add_in in self.best_fit: #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
-                    ingredient = self.best_fit[add_in] 
-                pairs = fp.pairing(ingredient, .55) #Finds ingredients that pair well with each add in
-                for key in pairs.keys(): #Add each ingredient from the pairings to ingredient_pairings dictionary. 
-                    ingredient_pairings[key] = add_in_amount #The quantity of pairings remains the same as the AddIn it was paired from
-            except KeyError: # we didn't find the ingredient in our database
+                 #If it's in the best fit dictionary, use the best fit name, otherwise use origional name
+                if add_in in self.best_fit:
+                    ingredient = self.best_fit[add_in]
+                #Finds ingredients that pair well with each add in 
+                pairs = fp.pairing(ingredient, .55) 
+                #Add each ingredient from the pairings to ingredient_pairings dictionary. 
+                for key in pairs.keys(): 
+                    #The quantity of pairings remains the same as the AddIn it was paired from
+                    ingredient_pairings[key] = add_in_amount 
+            # we didn't find the ingredient in our database
+            except KeyError: 
                 pass
                 #print("Whoops! key error: ", ingredient, " was not found in database")
         dict_keys = list(ingredient_pairings.keys()) 
         if len(dict_keys) > 1:
             rand_index = random.randint(0, len(dict_keys) - 1)
-            rand_key = dict_keys[rand_index] #Choose a random ingredient from the ingredients that pair well with existing add ins
-            self.add_ins[rand_key] = ingredient_pairings[rand_key] # update the add_ins for this recipe and corresponding quantity
-            return rand_key #return the new ingredient to be added 
+            #Choose a random ingredient from the ingredients that pair well with existing add ins
+            rand_key = dict_keys[rand_index] 
+            # update the add_ins for this recipe and corresponding quantity
+            self.add_ins[rand_key] = ingredient_pairings[rand_key] 
+            #return the new ingredient to be added
+            return rand_key  
         else:
             return None
 
-
-    
-    def replaceIngredient(self):
+    def replace_ingredient(self):
         """
-    Here we are trying to replace a random ingredient with an ingredient that pairs well with another ingredient in the recipe
+        Here we are trying to replace a random ingredient with an ingredient that pairs well with another ingredient in the recipe
 
-    @params:
-        add_ins --> list of add in objects
-    @returns:
-        the new add_in, as an object
-
-    """
-        rand_int = random.randint(0, len(self.add_ins) - 1) # index to delete
-        rand_int2 = random.randint(0, len(self.add_ins)-1) #index of what to pair new flavor with
-        try: # try calling pairing function
+        @params:
+            add_ins --> list of add in objects
+        @returns:
+            the new add_in, as an object
+        """
+        # index to delete
+        rand_int = random.randint(0, len(self.add_ins) - 1) 
+        #index of what to pair new flavor with
+        rand_int2 = random.randint(0, len(self.add_ins)-1) 
+        # try calling pairing function
+        try: 
             amount = self.add_ins[list(self.add_ins.keys())[rand_int2]]
-            if self.add_ins.keys()[rand_int2] in self.best_fit.keys(): # if its in best fit dictionary
-                ingredient = self.best_fit[list(self.add_ins.keys())[rand_int2]] # set ingredient to best fit
+            # if its in best fit dictionary
+            if self.add_ins.keys()[rand_int2] in self.best_fit.keys(): 
+                # set ingredient to best fit
+                ingredient = self.best_fit[list(self.add_ins.keys())[rand_int2]] 
             else:
-                ingredient = list(self.add_ins.keys())[rand_int2] # else set ingredient accordingly
+                # else set ingredient accordingly
+                ingredient = list(self.add_ins.keys())[rand_int2] 
             new_ingredients = fp.pairing(ingredient, 0.4)
         except KeyError:
             #print("couldnt pair ingredient")
             return
-        if len(new_ingredients) > 1: # if we found an ingredient, add it to recipe
+        # if we found an ingredient, add it to recipe
+        if len(new_ingredients) > 1: 
             rand_item = random.randint(0, len(new_ingredients)-1)
-            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {amount:1}) # Need to determine what quantity to put
+            # Need to determine what quantity to put
+            new_ingredient = AddIns(list(new_ingredients.keys())[rand_item], {amount:1}) 
             key_to_replace = list(self.add_ins.keys())[rand_int]
             del self.add_ins[key_to_replace]
             self.add_ins[new_ingredient.name] = amount
