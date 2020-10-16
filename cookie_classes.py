@@ -1,3 +1,19 @@
+"""
+Authors: Kim H, Kayla S, Lydia P
+CSCI 3725 - Computational Creativity
+Party Quest 2: Smart Cookies
+Last Modified: Oct 16, 2020
+
+The purpose of this program is to use cookie recipes from the internet to generate new recipes 
+with creative ingredients! We are using recipes from Sally's Baking as the recipes on this site
+are really fun and lots of them have unique add-ins that we can use! We hace named our system
+GECCO - Genetically Exploring Creative Cookie Options.
+
+This file holds all of our classes used to organize and build cookie recipes, as well as the 
+appropriate functions. It is also includes fuctions for the genetic aspect of our code -- such
+as the fitness function and mutation fuctions. This file is utilized in generate_cookies.py
+"""
+
 import numpy
 import random
 import re
@@ -6,7 +22,9 @@ from itertools import combinations
 from webcrawl import getCookieRecipes
 
 
-"""
+
+class BaseIngredient(object):
+    """
 Attributes:
     name --> str of the name
     quantities --> dictionary where keys are the quantity and value is the number of times that quantity is seen across all recipes.
@@ -14,12 +32,13 @@ Attributes:
     is found in 11 recipes, 5 times with 1 cup and 6 times with 0.5 cup
 
 """
-class BaseIngredient(object):
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
     
-    """
+    
+    def getQuantity(self):
+        """
     Returns a quantity that should correspond with a certain ingredient.
     Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
         
@@ -28,7 +47,6 @@ class BaseIngredient(object):
     @returns:
         returns the quantity
     """
-    def getQuantity(self):
         new_quantity = 0
         for key in self.quantities.keys():
             new_quantity = key # the quantity will be assigned to this variable
@@ -49,20 +67,23 @@ class BaseIngredient(object):
 
         return new_quantity
     
-    """
+   
+    def updateQuantity(self, quantity):
+         """
     Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
     
     @params:
         quantity --> the quantity whose value in the quantities dict we need to update
     """
-    def updateQuantity(self, quantity):
         if quantity in self.quantities:
             self.quantities[quantity]+=1
         else:
             self.quantities.setdefault(quantity, 1)
 
 
-"""
+
+class AddIns(object):
+    """
 Add in objects are a single add-in used in recipes
 
 Attributes:
@@ -72,12 +93,13 @@ Attributes:
     is found in 5 recipes, 3 times with 1 cup and twice with 2 cups
 
 """
-class AddIns(object):
     def __init__(self, name, quantities):
         self.name = name
         self.quantities = quantities
 
-    """
+    
+    def getQuantity(self):
+        """
     Returns a quantity that should correspond with a certain ingredient.
     Chosen probabilistically based on the number of times this quantity appears in the inspiring set of recipes.
         
@@ -86,7 +108,6 @@ class AddIns(object):
     @returns:
         returns the quantity
     """
-    def getQuantity(self):
         new_quantity = 0
         for key in self.quantities.keys():
             new_quantity = key # the quantity will be assigned to this variable
@@ -107,16 +128,19 @@ class AddIns(object):
 
         return new_quantity
 
-    """
+    
+    def updateQuantity(self, quantity):
+        """
     Given the quantity of an ingredient, updates the quantities dictionary to maintain a count of the quantity's appearance in the inspiring set
     """
-    def updateQuantity(self, quantity):
         if quantity in self.quantities:
             self.quantities[quantity]+=1
         else:
             self.quantities.setdefault(quantity, 1)
 
-"""
+
+class Recipe(object):
+    """
 The recipe class creates recipe Objects, which we add to our list of recipes as we create them in generate_cookies.py
 
 Attributes:
@@ -127,7 +151,6 @@ Attributes:
     ingredient that is similar to it
     fitness --> fitness of the recipe, based off of flavor similarities across add-ins
 """
-class Recipe(object):
     def __init__(self, name, base_ingredients, add_ins):
         self.name = name
         self.base_ingredients = base_ingredients
@@ -139,7 +162,9 @@ class Recipe(object):
                 "heath bars":"hazelnut", "graham cracker crumbs":"cocoa", 'almonds':'almond', "pure vanilla extract":'vanilla', "ground cinnamon":'cinnamon', "ground allspice":"allspice"}
         self.fitness = 0
 
-    """
+    
+    def fitnessFunction(self):
+        """
     Returns the fitness of our recipe, based on the similarity between our ingredients
 
     We have the best_fit data structure to account for names of add ins that are unusual, and are not in the data base. In this case, we pair
@@ -152,7 +177,6 @@ class Recipe(object):
     @returns:
         total --> the total fitness for the recipe
     """
-    def fitnessFunction(self):
         # dictionary mapping add in name to 'best fit' name 
     
         total = 0 # initialize total
@@ -177,7 +201,9 @@ class Recipe(object):
             total = 0
         self.fitness = total
 
-    """
+    
+    def addIngredient(self):
+        """
     Returns a single AddIn object to be added to a new recipe
     Walks through all of the of the AddIn ingredients of a new recipe, and adds ingredients that pair within .5 of 
     each AddIn ingredient to a dictonary called ingredient_pairings. They keys are new ingredient names from the .npy
@@ -187,7 +213,6 @@ class Recipe(object):
     @returns:
         returns a single AddIn object
     """
-    def addIngredient(self):
         # initialize dictionary that stores pairings
         ingredient_pairings = {} 
         for add_in in self.add_ins.keys(): #for each add in in the new recipe
@@ -212,7 +237,9 @@ class Recipe(object):
             return None
 
 
-    """
+    
+    def replaceIngredient(self):
+        """
     Here we are trying to replace a random ingredient with an ingredient that pairs well with another ingredient in the recipe
 
     @params:
@@ -221,7 +248,6 @@ class Recipe(object):
         the new add_in, as an object
 
     """
-    def replaceIngredient(self):
         rand_int = random.randint(0, len(self.add_ins) - 1) # index to delete
         rand_int2 = random.randint(0, len(self.add_ins)-1) #index of what to pair new flavor with
         try: # try calling pairing function

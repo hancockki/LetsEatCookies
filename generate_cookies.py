@@ -1,3 +1,21 @@
+"""
+Authors: Kim H, Kayla S, Lydia P
+CSCI 3725 - Computational Creativity
+Party Quest 2: Smart Cookies
+Last Modified: Oct 16, 2020
+
+The purpose of this program is to use cookie recipes from the internet to generate new recipes 
+with creative ingredients! We are using recipes from Sally's Baking as the recipes on this site
+are really fun and lots of them have unique add-ins that we can use! We hace named our system
+GECCO - Genetically Exploring Creative Cookie Options.
+
+This file includes the main fuction for our program and utilizes cookie_classes, flavorpairing.py, 
+ingred_categories.npy, and ingred_word_emb.npy and recipes.json. We first check to see if our 
+hard-coded json datafor the webcrawl exists (since we don't want to run the webcrawl more than 
+needed as it's slow). If it exists, load the json file into the dictionary format we want. After
+building our inspiring set, we call call generateRecipes.
+"""
+
 import numpy
 import random
 import re
@@ -13,8 +31,9 @@ from itertools import product
 import flavorpairing as fp
 from operator import attrgetter
 
-"""
-This method builds a new cookie recipe based on our base_ingredient, add_ins, and recipe_objects. It first picks two recipes probabilistically based
+
+def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
+    """This method builds a new cookie recipe based on our base_ingredient, add_ins, and recipe_objects. It first picks two recipes probabilistically based
 on their fitness (higher fitness=higher chance of being picked), then picks add-ins from these based on the flavor pairings between the recipes.
 
 @params:
@@ -25,7 +44,6 @@ on their fitness (higher fitness=higher chance of being picked), then picks add-
 @returns:
     new_recipe --> the new recipe object we've made
 """
-def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
     base_ingredients_new_recipe = {}
 
     # include one of every base ingredient, picking the quantities probabilistically from those in inspiring set
@@ -53,7 +71,9 @@ def buildNewRecipe(base_ingredients, add_ins, recipe_objects):
  
     return new_recipe
 
-"""
+
+def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins, best_fit):
+    """
 This method picks the add-ins for our new recipe. It does so by computing the similarity between all combinations of two add-ins across our recipe objects. So,
 if one recipe has "chocolate chips, vanilla" and another has "craisins, cream cheese", then it will compute the flavor similarities of (chocolate chips, vanilla), (chocolate chips, craisins),
 (chocolate chips, cream cheese), etc, until all pairs are considered.
@@ -69,7 +89,6 @@ Then, a random number between 0 and the number of add-ins total is chosen, and t
     add_ins_new_recipe --> add ins for our new recipe
 
 """
-def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins, best_fit):
     #this is the list of all possible pairs of add-ins from our best two recipes
     #product is a method that returns all the pairs
     output = list(product(add_ins_recipe_1.keys(), add_ins_recipe_2.keys()))
@@ -129,7 +148,9 @@ def getAddInsNewRecipe(add_ins_recipe_1, add_ins_recipe_2, add_ins, best_fit):
 
     return add_ins_new_recipe
 
-"""
+
+def getInspiringSet(recipes):
+    """
 In this method, we are building our inspiring set
 
 @params:
@@ -138,7 +159,6 @@ In this method, we are building our inspiring set
 @returns:
 
 """
-def getInspiringSet(recipes):
     recipe_objects = []
 
     #need to extract the quantities dictionary for each 
@@ -174,7 +194,9 @@ def getInspiringSet(recipes):
 
     return base_ingredients, add_ins, recipe_objects
 
-"""
+
+def updateAddInDataSet(next_recipe, add_ins, ingredient):
+    """
 Here, we are updating our add ins dictionary. We call this method when we come across an add-in in a recipe. This method
 is called if we loop through all the base ingredients in the base_ingredients dictionary and none matched the ingredient
 we are on. We check a few edge cases (happens when the webcrawl isn't perfect) and then update
@@ -189,7 +211,6 @@ oreos and it will become {"chocolate chips":{"1 cup":2}, "oreos", {"18":1}} (the
     next_recipe --> the recipe we are looping through
     ingredient --> the add in ingredient we are updating
 """
-def updateAddInDataSet(next_recipe, add_ins, ingredient):
     quantity = ingredient[1].strip(' ')
     # edge cases
     if 'cornstarch' in ingredient[1]:
@@ -223,7 +244,9 @@ def updateAddInDataSet(next_recipe, add_ins, ingredient):
             add_ins[name] = new_add_in
             next_recipe.add_ins[name]=quantity
 
-"""
+
+def updateBaseIngredDataSet(ingredient, next_recipe, base_ingredients, i):
+    """
 Here, we are updating our base ingredient dictionary. We call this method when we come across a base
 ingredient in a recipe. We check a few edge cases (happens when the webcrawl isn't perfect) and then update
 the quantity in the dictionary accordingly. For example, if we come across '2 eggs' in our recipe, we call this
@@ -237,7 +260,6 @@ a quantity of two eggs and it will become {"egg":{1:2, 2:1}}
     base_ingredients --> our overall base ingredient dictionary
     i --> the base ingredient we are updating
 """
-def updateBaseIngredDataSet(ingredient, next_recipe, base_ingredients, i):
     # match the ingredient quantity
     #q = re.search(r'^[0-9]+(.[0-9]+)*(\sand\s)*([0-9]+(.[0-9]+))*(\s[a-zA-Z]+)*', ingredient[1])
     quantity = ingredient[1].strip(' ')
@@ -259,13 +281,14 @@ def updateBaseIngredDataSet(ingredient, next_recipe, base_ingredients, i):
         next_recipe.base_ingredients[i]=quantity
         return True
 
-"""
+
+def writeToFile(recipe):
+    """
 Write recipe to a file
 
 @params:
     recipe --> recipe object
 """
-def writeToFile(recipe):
     with open("recipes/" + recipe.name + ".txt", 'w') as new_recipe:
         egg_quantity = 0
         new_recipe.write(recipe.name + "\n")
@@ -308,7 +331,9 @@ def writeToFile(recipe):
         new_recipe.write("9. Enjoy!\n")
     new_recipe.close()
 
-"""
+
+def getName(add_ins): 
+    """
 Creates a name for the recipe by including two different add-in ingredients to the name.
 
 @params:
@@ -317,7 +342,6 @@ Creates a name for the recipe by including two different add-in ingredients to t
 @returns:
     name --> the name for our new recipe!
 """
-def getName(add_ins): 
     # if we have more than 1 add in ingredients to add
     if len(add_ins) > 1:
         int1 = 0
@@ -348,7 +372,9 @@ def getName(add_ins):
 
     return name
 
-"""
+
+def pickMutation(new_recipe):
+    """
 Decide what mutation to make
 @params:
     new_recipe --> the recipe object we are mutating
@@ -357,7 +383,6 @@ Decide what mutation to make
     new_ingredient --> the new ingredient we added/replaced
 
 """
-def pickMutation(new_recipe):
     random_num = random.randint(0,100)
     new_ingredient = None
     if random_num < 80:
@@ -366,7 +391,9 @@ def pickMutation(new_recipe):
         new_ingredient = new_recipe.replaceIngredient()
     return new_ingredient
 
-"""
+
+def printInfo(base_ingredients, add_ins, recipe_objects):
+    """
 This method prints all the info related to our overall data sets. Can be called before or after generating
 new recipes. With each new recipe, we add it to the recipe_objects list. We also update the base ingredients
 dictionary with the new recipe's base ingredients quantities and the add in dictionary with the add in quantities.
@@ -378,7 +405,6 @@ dictionary with the new recipe's base ingredients quantities and the add in dict
     that ingredient to the # of times it occurs
     recipe_objects --> list of recipe objects, with base ingredients and add ins as attributes
 """
-def printInfo(base_ingredients, add_ins, recipe_objects):
     #print base ingredients and their quantities one at a time
     for value in base_ingredients.values():
         print("Base Ingredient:", value.name)
@@ -396,7 +422,9 @@ def printInfo(base_ingredients, add_ins, recipe_objects):
             print(quantity, ingredient)
         print("\n")
 
-"""
+
+def generateRecipes(num_recipes, base_ingredients, add_ins, recipe_objects):
+    """
 Generate the desired number of new recipes, and prints the best one based on our fitness function.
 
 @params:
@@ -405,7 +433,6 @@ Generate the desired number of new recipes, and prints the best one based on our
     add_ins --> dictionary of add ins and their quantities
     recioe_objects --> list of recipe objects
 """
-def generateRecipes(num_recipes, base_ingredients, add_ins, recipe_objects):
     new_recipe_objects = [] #store our new recipe objects
     # loop to generate cookies
     for i in range(num_recipes):
@@ -431,15 +458,9 @@ def generateRecipes(num_recipes, base_ingredients, add_ins, recipe_objects):
     print("\nBest recipe from this iteration:", new_recipes_sorted[0].name)
     
 
-"""
-Main method, used to run the program. First, checks to see if our hard-coded json data for the webcrawl exists (since we don't want to
-run the webcrawl more than needed as it's slow). If it exists, load the json file into the dictionary format we want.
 
-Then, creates the inspiring set based on the json. The inspiring set method returns our base ingredients, add ins, and recipe objects.
-
-Finally, calls generateRecipes.
-"""
 def main():
+
     # check to see if our data set is already hard-coded
     print("Checking to see if inspiring set json already exists")
     try:
