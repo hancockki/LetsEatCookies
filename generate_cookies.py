@@ -449,8 +449,10 @@ def main():
                 recipes = json.load(json_file)
     except:
         print("json file is empty or does not exist")
-        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/caramel-surprise-snickerdoodles/','https://sallysbakingaddiction.com/death-by-chocolate-peanut-butter-chip-cookies/','https://sallysbakingaddiction.com/sweet-salty-potato-chip-toffee-cookies-2/','https://sallysbakingaddiction.com/smores-chocolate-chip-cookies/','https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/','https://sallysbakingaddiction.com/biscoff-chocolate-chip-cookies/', \
-            'https://sallysbakingaddiction.com/white-chocolate-cranberry-pistachio-cookies/','https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
+        recipes = getCookieRecipes(['https://sallysbakingaddiction.com/caramel-surprise-snickerdoodles/','https://sallysbakingaddiction.com/death-by-chocolate-peanut-butter-chip-cookies/',\
+            'https://sallysbakingaddiction.com/sweet-salty-potato-chip-toffee-cookies-2/','https://sallysbakingaddiction.com/smores-chocolate-chip-cookies/','https://sallysbakingaddiction.com/white-chocolate-chai-snickerdoodles/',\
+            'https://sallysbakingaddiction.com/biscoff-white-chocolate-oatmeal-cookies/#tasty-recipes-76093', 'https://sallysbakingaddiction.com/white-chocolate-cranberry-pistachio-cookies/','https://sallysbakingaddiction.com/pumpkin-chocolate-chip-cookies/', \
+            'https://sallysbakingaddiction.com/peanut-butter-cookies/', 'https://sallysbakingaddiction.com/soft-chewy-oatmeal-raisin-cookies/', \
         'https://sallysbakingaddiction.com/crispy-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/bunny-sugar-cookies/','https://sallysbakingaddiction.com/dark-chocolate-cranberry-almond-cookies/', \
             'https://sallysbakingaddiction.com/zucchini-oatmeal-chocolate-chip-cookies/', 'https://sallysbakingaddiction.com/cookies-n-cream-cookies/', 'https://sallysbakingaddiction.com/oreo-cheesecake-cookies/', \
             'https://sallysbakingaddiction.com/chewy-oatmeal-mm-cookies/'])
