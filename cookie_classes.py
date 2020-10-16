@@ -1,3 +1,19 @@
+"""
+Authors: Kim H, Kayla S, Lydia P
+CSCI 3725 - Computational Creativity
+Party Quest 2: Smart Cookies
+Last Modified: Oct 16, 2020
+
+The purpose of this program is to use cookie recipes from the internet to generate new recipes 
+with creative ingredients! We are using recipes from Sally's Baking as the recipes on this site
+are really fun and lots of them have unique add-ins that we can use! We hace named our system
+GECCO - Genetically Exploring Creative Cookie Options.
+
+This file holds all of our classes used to organize and build cookie recipes, as well as the 
+appropriate functions. It is also includes fuctions for the genetic aspect of our code -- such
+as the fitness function and mutation fuctions. This file is utilized in generate_cookies.py
+"""
+
 import numpy
 import random
 import re
