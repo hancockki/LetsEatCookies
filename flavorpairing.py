@@ -1,4 +1,9 @@
 """
+Authors: Unknown. Pulled from the CSCI 3725 website
+CSCI 3725 - Computational Creativity
+Party Quest 2: Smart Cookies
+Last Modified: Oct 16, 2020
+
 An example of how you could use flavor data to inform your recipe
 generation process.  Requires Python v3.
 
@@ -13,6 +18,7 @@ import numpy as np
 WORD_EMBED_VALS = np.load('ingred_word_emb.npy', allow_pickle=True).item()
 INGRED_CATEGORIES = np.load('ingred_categories.npy', allow_pickle=True).item()
 INGREDIENT_LIST = sorted(WORD_EMBED_VALS.keys())
+
 
 def similarity(n1, n2):
     """Returns the similarity between two ingredients based on our data."""
